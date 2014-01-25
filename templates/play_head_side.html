@@ -1,0 +1,20 @@
+<div id="header" class="navbar navbar-default">
+	<strong><div class="nav navbar-nav navbar-header"><a href="#" class="navbar-brand">Football Pick Em'</a></div>
+	<!--If logged in, then don't display this -->
+	<div class="navbar-collapse collapse navbar-responsive-collapse">
+		{% if not user %}
+		<ul class="navbar-right">
+			<div class="nav navbar-nav"><li id="login"><a class="navbar-link" href="/signup?source=picks">Sign Up</a></li></div>
+			<div class="nav navbar-nav"><li id="login"><a class="navbar-link" href="/login?source=picks">Log In</a></li></div>
+		</strong></ul>
+		{% else %}
+		<ul class="navbar-right">
+			<div class="nav navbar-nav navbar-brand"><li id="login">Welcome {{user.username}}</li></div>
+			<div class="nav navbar-nav"><li id="login"><a class="navbar-link" href="/logout?source=picks">Log Out</a></li></div>
+			{% if user.admin == 1 %}
+			<div class="nav navbar-nav"><li id="login"><a class="navbar-link" href="/admin">Admin Menu</a></li></div>
+			{% endif %}
+		</strong></ul>
+		{% endif %}
+	</div>
+</div>

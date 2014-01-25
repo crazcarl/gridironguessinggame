@@ -1,0 +1,31 @@
+{% include 'play_header.html' %}
+<body>
+
+<div class="container">
+{% include 'play_head_side.html' %}
+{% include 'play_side.html' %}
+
+<div class="col-md-8">
+
+<h2> These are the picks for week {{week}} </h2>
+
+{% for gamenum in results %}
+	<table class="table">
+		<thead>
+			<th colspan="2" style="text-align:center" class="span3">Game {{gamenum}}</th>
+		</thead>
+		<tbody>
+		{% for team in results[gamenum] %}
+			<tr>
+				<td>{{team}}</td> 
+				<td>{{results[gamenum][team]}}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table><br><br>
+{% endfor %}
+<!-- Loop Here for Users that did not pick this week -->
+
+</div>
+</div>
+</body>

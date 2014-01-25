@@ -1,0 +1,16 @@
+Home,Away,Line,Special
+San Francisco,St Louis,1
+Kansas City,NY Giants,1
+Tampa Bay,Arizona,1
+Pittsburgh,Minnesota,1
+Baltimore,Buffalo,1
+Cincinnati,Cleveland,1
+Detroit,Chicago,1
+Seattle,Houston,1
+Indianapolis,Jacksonville,1
+Denver,Philadelphia,1
+Tennessee,NY Jets,1
+Washington,Oakland,1
+Dallas,San Diego,1
+Atlanta,New England,1
+New Orleans,Miami,1

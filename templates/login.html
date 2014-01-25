@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<head>
+	<title>Give it a try. Just the tip.</title>
+</head>
+{% include 'play_header.html' %}
+<body>
+<div class="container">
+{% include 'play_head_side.html' %}
+{% include 'play_side.html' %}
+	<div class="col-md-8">
+	<h2> Log in </h2>
+		<form method="POST">
+			UserName: <input type='text' name='username'></input><br>
+			Password: <input type='password' name='password'></input><br>
+			<input type='submit' value='Sign In'></input><br>
+			{{error}}
+		</form>
+	</div>
+</div>
+
+
+</body>

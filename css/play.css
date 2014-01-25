@@ -1,0 +1,56 @@
+textarea{ 
+resize:none;
+width:500px;
+}
+
+
+.game {
+	background-color: #F0F8FF;
+	border-radius: 5px;
+	width: 35%;
+}
+.line {
+	color: red;
+	width:15%
+}
+
+
+
+#sidebar-list {
+	margin-top:23px;
+	height:250px;
+	margin-left: 20px;
+	font-size: 20px;
+	font-family: Verdana;
+	color: black;
+}
+
+
+.righttd {
+	float:right;
+
+}
+.lefttd {
+	float:left;
+}
+#g1 {
+	text-align: right;
+
+}
+
+
+thead {
+	font-size: 30px;
+	font-style: bold;
+	background-color: #ccdff0;
+}
+
+.message {
+	background-color: #F5FFFA;
+	width: 15%;
+}
+
+
+.winner {
+	background-color:#9ACD32;
+}

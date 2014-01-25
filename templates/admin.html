@@ -1,0 +1,26 @@
+{% include 'play_header.html' %}
+<body>
+
+
+	<div class="container">
+	{% include 'play_head_side.html' %}
+	{% include 'play_side.html' %}
+	<div class="col-md-8">
+		<div>{{message}}</div>
+		<form method="post" action="admin?type=loaddates"><br>Load Dates File: <textarea name="dates" rows="20"></textarea>
+		<input type="submit" value="Submit Dates File"></form>
+		<br><br>
+		<form method="post" action="admin?type=loadweek">
+			Load Week:
+			<select name="weekselection">
+				<option value=1>Week 1</option>
+				<option value=2>Week 2</option>
+				<option value=3>Week 3</option>
+				<option value=4>Week 4</option>
+				<option value=5>Week 5</option>
+			</select>
+		<textarea name="week" rows="20"></textarea>
+		<input type="submit" value="Submit Current Week File"></form>
+	</div>
+	</div>
+</body>

@@ -1,0 +1,63 @@
+{% include 'play_header.html' %}
+<body>
+
+<div class="container">
+{% include 'play_head_side.html' %}
+{% include 'play_side.html' %}
+<div class="col-md-8">
+<h4>These are the picks for week {{week}}, the cutoff date for picks is {{cutoff}} at 7pm AZ time.</h4>
+{% if message %}
+<h2> {{message}}.</h2>
+{% endif %}
+<form method="POST" action="/play/makepicks" class="picks">
+	<!-- Game Table -->
+	<table class="table">
+	<thead>
+		<th style="text-align:center">Home</th>
+		<th style="text-align:center">Line</th>
+		<th style="text-align:center">Away</th>
+	</thead>
+	<tbody>
+	{% for game in games %}
+	<tr>
+		<td class="game" id="g1">
+		{% if game.line < 0 %}
+		<b>
+		{% endif %}
+		{{game.home_team}}
+		{% if game.line < 0 %}
+		</b>
+		{% endif %}
+			<input type="radio" name={{loop.index}} value="{{game.home_team}}" class="lefttd" {% if game.home_team in picks %} checked {% endif %} {% if vo %}disabled {% endif %}>
+		</td>
+		<td class="line" style="text-align:center">{{game.line}}</td>
+		<td class="game" id="g2">
+		{% if game.line > 0 %}
+		<b>
+		{% endif %}
+		{{game.away_team}}
+		{% if game.line > 0 %}
+		</b>
+		{% endif %}
+			<input type="radio" name={{loop.index}} value="{{game.away_team}}" class="righttd" {% if game.away_team in picks %} checked {% endif %} {% if vo %}disabled {% endif %}>
+		</td>
+		{% if game.special %}
+		<td class="message">
+			<span>{{game.special}}</span>
+		</td>
+		{% endif %}
+	</tr>
+	{% endfor %}
+	<tr id="tablebutton">
+		<td><input type="Submit" value="Submit Picks" id="submit"></td>
+		<td name="MNS">Monday Night Score:</td>
+		<td><input type="text" name="tiebreak" {% if picks %} value={{picks[-1]}} {% endif %} {% if vo %}disabled {% endif %} id="tiebreak"></td>
+	</tr>
+	</tbody>
+	</table>
+</form>
+</div>
+</div>
+</body>
+
+
