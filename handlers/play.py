@@ -285,6 +285,7 @@ class ResultsHandler(SignupHandler):
 			return None
 		week=current_week(self)
 		if not week or week == 0:
+			self.redirect_to('play')
 			return None
 		usernames = []
 		users = User.all().fetch(1000)
@@ -347,6 +348,9 @@ class StandingsHandler(SignupHandler):
 		
 		# How many weeks worth of standings will we have?
 		winner = User.by_name("winner")
+		if not winner:
+			self.redirect_to('play')
+			return None
 		weeks = UserPicks.all().filter('user_id =', float(winner.key().id())).order("-week").get()
 		if not weeks:
 			return None
