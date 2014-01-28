@@ -1,6 +1,3 @@
-This is the readme.md
-
-
 <h2> Pick Em' </h2>
 
 <p>
