@@ -39,10 +39,12 @@ class ThreadHandler(SignupHandler):
 		user = User.by_name(user)
 		post = self.request.get('post')
 		thread_cls=Thread.by_id(int(thread))
-		post = Post(parent = thread_cls,
-					content = post,
-					user = user)
-		post.put()
+		#needs better verification
+		if user and post and thread:
+			post = Post(parent = thread_cls,
+						content = post,
+						user = user)
+			post.put()
 		self.redirect_to('thread',thread=thread)
 		
 
