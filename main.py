@@ -23,5 +23,7 @@ app = WSGIApplication([
 	Route(r'/logout',handler='handlers.signup.LoginHandler',name='logout',handler_method='logout'),
 	Route(r'/play/results',handler='handlers.play.ResultsHandler',name='results'),
 	Route(r'/admin',handler='handlers.play.AdminHandler', name='admin'),
-	Route(r'/play/standings',handler='handlers.play.StandingsHandler', name='standings')
+	Route(r'/play/standings',handler='handlers.play.StandingsHandler', name='standings'),
+	Route(r'/play/comments',handler='handlers.comments.ForumHandler', name='forum'),
+	Route(r'/play/comments/<thread:\d+>',handler='handlers.comments.ThreadHandler',name='thread')
 ], debug=True)

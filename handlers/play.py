@@ -432,6 +432,7 @@ def compare_picks(self,winner_picks,player_picks):
 ##### Models ######		
 class Results(db.Model):
 	week = db.IntegerProperty(required = True)
+	#change this to db.ReferenceProperty
 	user_id = db.FloatProperty(required = True)
 	wins = db.IntegerProperty(required = True)
 	losses = db.IntegerProperty(required = True)
@@ -439,6 +440,7 @@ class Results(db.Model):
 	winner = db.IntegerProperty(default = 0)
 	#put method here to get username
 class UserPicks(db.Model):
+	#change this to db.ReferenceProperty
 	user_id = db.FloatProperty(required = True)
 	picks = db.ListProperty(required = True, item_type=str)
 	created = db.DateTimeProperty(auto_now_add = True)

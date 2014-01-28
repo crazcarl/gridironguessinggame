@@ -1,0 +1,38 @@
+{% include 'play_header.html' %}
+<body>
+
+<div class="container">
+{% include 'play_head_side.html' %}
+{% include 'play_side.html' %}
+
+<div class="col-md-8">
+	<h2> Threads </h2>
+	<div>
+		{% for post in threads %}
+			Title: <a href="/play/comments/{{post.key().id()}}">{{post.title}}</a>
+		{% endfor %}
+	</div>
+	<h2> Submit new post </h2>
+	<form method="POST">
+		<div class="form-group">
+			<label for="name">User Name</label>
+			<input type="text" class="form-control" name="username" placeholder="Enter name" id="name">
+		</div>
+		<div class="form-group">
+			<label for="Title">Title</label>
+			<input type="text" class="form-control" id="title" placeholder="Enter Title" name="title">
+		</div>
+		
+		<div class="form-group">
+			<label for="post">Post</label>
+			<input type="text" class="form-control" id="post" placeholder="Enter Post" name="post">
+		</div>
+		<div class="form-group">
+			<input type='submit' value='Submit Post'></input>
+		</div>
+	</form>
+
+
+</div>
+</div>
+</body>
