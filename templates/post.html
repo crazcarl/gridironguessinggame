@@ -1,0 +1,34 @@
+{% include 'play_header.html' %}
+<body>
+
+<div class="container">
+{% include 'play_head_side.html' %}
+{% include 'play_side.html' %}
+
+<div class="col-md-8">
+	<div> Title: {{thread.title}}</div><br>
+	<div>
+		{% for post in posts %}
+			{{post.user.username}}: {{post.content}} <br>
+		{% endfor %}
+	</div>
+
+	<form method="POST">
+		<div class="form-group">
+			<label for="name">User Name</label>
+			<input type="text" class="form-control" name="username" placeholder="Enter name" id="name">
+		</div>
+		
+		<div class="form-group">
+			<label for="post">post</label>
+			<input type="text" class="form-control" id="post" placeholder="Enter Post" name="post">
+		</div>
+		<div class="form-group">
+			<input type='submit' value='Submit Post'></input>
+		</div>
+	</form>
+	
+	
+</div>
+</div>
+</body>
