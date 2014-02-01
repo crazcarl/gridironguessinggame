@@ -6,6 +6,7 @@
 {% include 'play_side.html' %}
 
 <div class="col-md-8">
+	<a href="/play/comments"> < back</a>
 	<div> Title: {{thread.title}}</div><br>
 	<div>
 		{% for post in posts %}
@@ -15,8 +16,8 @@
 	{% if user %}
 	<form method="POST">
 		<div class="form-group">
-			<label for="post">post</label>
-			<input type="text" class="form-control" id="post" placeholder="Enter Post" name="post">
+			<label for="post">New Post:</label>
+			<textarea rows="10" type="text" class="form-control" id="post" placeholder="Enter Post" name="post"></textarea>
 		</div>
 		<div class="form-group">
 			<input type='submit' value='Submit Post'></input>
