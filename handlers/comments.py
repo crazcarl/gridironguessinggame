@@ -35,8 +35,7 @@ class ThreadHandler(SignupHandler):
 		posts = Post.all().order('-created').fetch(20)
 		self.render('post.html',thread=thread,posts=posts,user=self.user)
 	def post(self,thread):
-		user = self.request.get('username')
-		user = User.by_name(user)
+		user = self.user
 		post = self.request.get('post')
 		thread_cls=Thread.by_id(int(thread))
 		#needs better verification
