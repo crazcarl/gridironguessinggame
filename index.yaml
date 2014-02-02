@@ -21,3 +21,14 @@ indexes:
   properties:
   - name: created
     direction: desc
+
+- kind: Results
+  properties:
+  - name: week
+  - name: user
+
+- kind: UserPicks
+  properties:
+  - name: user
+  - name: week
+    direction: desc

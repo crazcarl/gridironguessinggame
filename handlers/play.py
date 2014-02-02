@@ -352,6 +352,7 @@ class StandingsHandler(SignupHandler):
 			return None
 		weeks = UserPicks.all().filter('user =', winner).order("-week").get()
 		if not weeks:
+			self.redirect_to('play')
 			return None
 		weeks = weeks.week
 		
@@ -407,15 +408,14 @@ def calc_results(self,week,w_picks = None):
 			else:
 				top_wins = wins
 				winner_list = [[results,tb]]
-	#just for testing
-	u_winner = winner_list[0][0]
-	u_winner = Results(wins=u_winner.wins,losses=u_winner.losses,user=u_winner.user,week=week,tb=tb,winner=1)
-	u_winner.put()
 	if len(winner_list) > 1:
 		#do tb case
 		for u in winner_list:
 			#fix this later
 			pass
+	elif winner_list:
+		winner_list[0][0].winner = 1
+		winner_list[0][0].put()
 	return fetch_results(self,week,update = True)
 
 # Compare "winner" picks to user picks
@@ -431,20 +431,16 @@ def compare_picks(self,winner_picks,player_picks):
 ##### Models ######		
 class Results(db.Model):
 	week = db.IntegerProperty(required = True)
-	#change this to db.ReferenceProperty
 	user = db.ReferenceProperty(User)
 	wins = db.IntegerProperty(required = True)
 	losses = db.IntegerProperty(required = True)
 	tb = db.IntegerProperty(default = 0)
 	winner = db.IntegerProperty(default = 0)
-	#put method here to get username
 class UserPicks(db.Model):
-	#change this to db.ReferenceProperty
 	user = db.ReferenceProperty(User)
 	picks = db.ListProperty(required = True, item_type=str)
 	created = db.DateTimeProperty(auto_now_add = True)
 	week = db.IntegerProperty(required = True)
-	#username = db.StringProperty(required = True)
 class Schedule(db.Model):
 	week = db.IntegerProperty(required = True)
 	home_team = db.StringProperty(required = True)
