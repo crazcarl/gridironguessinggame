@@ -113,8 +113,7 @@ def get_sched(self,week):
 def picked_this_week(self,week):
 	picks = memcache.get(str(self.user.username)+"week"+str(week))
 	if not picks:
-		uid = float(self.user.key().id())
-		picks = UserPicks.all().filter('user_id =', uid).filter('week =',week).get()
+		picks = UserPicks.all().filter('user =', self.user).filter('week =',week).get()
 	if picks:
 		memcache.set(str(self.user.username)+"week"+str(week),picks)
 	return picks
@@ -163,7 +162,7 @@ class PickHandler(Play):
 		
 		# Store picks
 		if not failed:
-			up = UserPicks(user_id=float(self.user.key().id()),
+			up = UserPicks(user=self.user,
 							picks = picks,
 							week = week,
 							username = self.user.username)
@@ -301,10 +300,10 @@ class ResultsHandler(SignupHandler):
 		
 		# Remove winner from picks and generate list of users who did not submit picks
 		for p in picks:
-			if p.username == "winner":
+			if p.user.username == "winner":
 				picks.remove(p)
-			if p.username in usernames:
-				usernames.remove(p.username)
+			if p.user.username in usernames:
+				usernames.remove(p.user.username)
 		
 		self.display_results(picks,usernames,week)
 	
@@ -326,10 +325,10 @@ class ResultsHandler(SignupHandler):
 			games[i][at] = []
 			for p in picks:
 				if ht in p.picks:
-					user=User.by_id(int(p.user_id))
+					user=p.user
 					games[i][ht].append(user.username)
 				elif at in p.picks:
-					user=User.by_id(int(p.user_id))
+					user=p.user
 					games[i][at].append(user.username)
 			games[i][at] = ', '.join([un for un in games[i][at]])
 			games[i][ht] = ', '.join([un for un in games[i][ht]])
@@ -351,8 +350,9 @@ class StandingsHandler(SignupHandler):
 		if not winner:
 			self.redirect_to('play')
 			return None
-		weeks = UserPicks.all().filter('user_id =', float(winner.key().id())).order("-week").get()
+		weeks = UserPicks.all().filter('user =', winner).order("-week").get()
 		if not weeks:
+			self.redirect_to('play')
 			return None
 		weeks = weeks.week
 		
@@ -368,7 +368,7 @@ def fetch_results(self,week,update = False):
 	if update <> True:
 		results = memcache.get("week"+str(week)+"results")
 	if not results:
-		results = Results.all().filter('week =',week).order("user_id").fetch(100)
+		results = Results.all().filter('week =',week).order("user").fetch(100)
 		memcache.set("week"+str(week)+"results",results)
 	return results
 
@@ -377,7 +377,7 @@ def calc_results(self,week,w_picks = None):
 	#need something to delete out old picks if need to be updated
 	if not w_picks:
 		winner = User.by_name("winner")
-		w_picks = UserPicks.all().filter('user_id =', float(winner.key().id())).filter('week =',week).get()
+		w_picks = UserPicks.all().filter('user =', winner).filter('week =',week).get()
 	if not w_picks:
 		return None
 	#get the number of games in the week for no picks case
@@ -391,7 +391,7 @@ def calc_results(self,week,w_picks = None):
 			continue
 		u_picks = memcache.get(str(u.username)+"week"+str(week))
 		if not u_picks:
-			u_picks = UserPicks.all().filter('user_id =', float(u.key().id())).filter('week =',week).get()
+			u_picks = UserPicks.all().filter('user =', u).filter('week =',week).get()
 		if u_picks:
 			(wins,losses) = compare_picks(self,w_picks.picks,u_picks.picks)
 			tb = abs(int(u_picks.picks[-1]) - int(w_picks.picks[-1]))
@@ -400,7 +400,7 @@ def calc_results(self,week,w_picks = None):
 			wins = 0
 			losses = games
 			tb = 0
-		results = Results(wins=wins,losses=losses,user_id=float(u.key().id()),week=week,tb=tb)
+		results = Results(wins=wins,losses=losses,user=u,week=week,tb=tb)
 		results.put()
 		if wins >= top_wins:
 			if wins == top_wins:
@@ -408,15 +408,14 @@ def calc_results(self,week,w_picks = None):
 			else:
 				top_wins = wins
 				winner_list = [[results,tb]]
-	#just for testing
-	u_winner = winner_list[0][0]
-	u_winner = Results(wins=u_winner.wins,losses=u_winner.losses,user_id=u_winner.user_id,week=week,tb=tb,winner=1)
-	u_winner.put()
 	if len(winner_list) > 1:
 		#do tb case
 		for u in winner_list:
 			#fix this later
 			pass
+	elif winner_list:
+		winner_list[0][0].winner = 1
+		winner_list[0][0].put()
 	return fetch_results(self,week,update = True)
 
 # Compare "winner" picks to user picks
@@ -432,20 +431,16 @@ def compare_picks(self,winner_picks,player_picks):
 ##### Models ######		
 class Results(db.Model):
 	week = db.IntegerProperty(required = True)
-	#change this to db.ReferenceProperty
-	user_id = db.FloatProperty(required = True)
+	user = db.ReferenceProperty(User)
 	wins = db.IntegerProperty(required = True)
 	losses = db.IntegerProperty(required = True)
 	tb = db.IntegerProperty(default = 0)
 	winner = db.IntegerProperty(default = 0)
-	#put method here to get username
 class UserPicks(db.Model):
-	#change this to db.ReferenceProperty
-	user_id = db.FloatProperty(required = True)
+	user = db.ReferenceProperty(User)
 	picks = db.ListProperty(required = True, item_type=str)
 	created = db.DateTimeProperty(auto_now_add = True)
 	week = db.IntegerProperty(required = True)
-	username = db.StringProperty(required = True)
 class Schedule(db.Model):
 	week = db.IntegerProperty(required = True)
 	home_team = db.StringProperty(required = True)

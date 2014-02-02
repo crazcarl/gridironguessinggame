@@ -11,8 +11,7 @@ class ForumHandler(SignupHandler):
 		threads = Thread.all().order('-created').fetch(10)
 		self.render('forum.html',threads=threads,user=self.user)
 	def post(self):
-		user = self.request.get('username')
-		user = User.by_name(user)
+		user = self.user
 		post = self.request.get('post')
 		title = self.request.get('title')
 		# needs better handling for user and post verification
@@ -32,7 +31,7 @@ class ForumHandler(SignupHandler):
 class ThreadHandler(SignupHandler):
 	def get(self,thread):
 		thread=Thread.by_id(int(thread))
-		posts = Post.all().order('-created').fetch(20)
+		posts = Post.all().order('-created').ancestor(thread).fetch(20)
 		self.render('post.html',thread=thread,posts=posts,user=self.user)
 	def post(self,thread):
 		user = self.user
