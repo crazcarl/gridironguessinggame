@@ -139,12 +139,3 @@ class LoginHandler(WelcomeHandler):
 			self.redirect_to('play')
 		else:
 			self.redirect_to('signup')
-			
-class ClearDB(AppHandler):
-	def get(self):
-		u = db.GqlQuery("Select * FROM User")
-		for x in u:
-			self.response.out.write(x.username)
-			self.response.out.write(x.pw_hash)
-			self.response.out.write('||||||||||||||')
-			#x.delete()
