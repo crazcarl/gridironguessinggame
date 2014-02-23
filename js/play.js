@@ -7,7 +7,10 @@ $(document).ready(function() {
 			alert("You didn't enter a valid MNF score. It's been replaced with 0. You can resubmit picks");
 		}
 		
-		// use getelementsbyID (or by name) to get an array of all the picks. Then use that to loop
-		// and check that they all have picks
-	});
-});
+		var rtnodes = document.getElementsByClassName("righttd");
+		var lfnodes = document.getElementsByClassName("lefttd");	});
+		for(var i=0; i < rtnodes.length; i++) {
+			if (!rtnodes[i].checked && !lfnodes[i].checked) {
+				alert("hey " + i + " is blank, son!")
+			}
+}
