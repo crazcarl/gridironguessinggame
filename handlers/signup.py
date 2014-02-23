@@ -23,7 +23,8 @@ class SignupHandler(AppHandler):
 		self.password = self.request.get('password')
 		self.vpw = self.request.get('verify')
 		self.email = self.request.get('email')
-		error=["","","",""]
+		self.league = self.request.get('league')
+		error=["","","","",""]
 		has_error=0
 		if not self.username or not UN_RE.match(self.username):
 			error.insert(0,"Invalid Username")
@@ -34,8 +35,12 @@ class SignupHandler(AppHandler):
 		if self.password <> self.vpw:
 			error.insert(2,"PWs no matchy")
 			has_error=1
-		if self.email and not EM_RE.match(self.email):
-			error.insert(3,"Invalid Email")
+		if not self.email or not EM_RE.match(self.email):
+			error.insert(3,"Valid Email Required")
+			has_error=1
+		# TODO: replace with actual PW at some point
+		if self.league <> 'asdf':
+			error.insert(4,"Invalid League PW")
 			has_error=1
 		if has_error==1:
 			self.render('signup.html',error=error)
