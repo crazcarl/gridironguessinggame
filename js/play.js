@@ -8,9 +8,12 @@ $(document).ready(function() {
 		}
 		
 		var rtnodes = document.getElementsByClassName("righttd");
-		var lfnodes = document.getElementsByClassName("lefttd");	});
+		var lfnodes = document.getElementsByClassName("lefttd");
 		for(var i=0; i < rtnodes.length; i++) {
 			if (!rtnodes[i].checked && !lfnodes[i].checked) {
-				alert("hey " + i + " is blank, son!")
+				j=i+1
+				alert("Hey you missed game " + j + "!")
 			}
-}
+		};
+	});
+})

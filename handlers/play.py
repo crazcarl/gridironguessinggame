@@ -18,7 +18,7 @@ class Play(SignupHandler):
 		self.render('play.html',user=self.user)
 	def picks(self):
 		if not self.user:
-			self.redirect_to('login',source='picks')
+			self.redirect_to('login')
 			return None
 		
 		week = current_week(self)
@@ -29,7 +29,7 @@ class Play(SignupHandler):
 		# See if user already picked this week
 		picks = picked_this_week(self,week)
 		if picks:
-			message="You already made picks this week"
+			message="You have made picks this week"
 			current_picks = picks.picks
 		else:
 			message=None
@@ -170,7 +170,7 @@ class PickHandler(Play):
 			if self.user.username == "winner":
 				calc_results(self,week,up)
 			memcache.set(str(self.user.username)+"week"+str(week),up)
-			self.redirect_to('results')
+			self.redirect_to('picks')
 			####TESTING EMAIL
 			#self.emailPicks(up)
 			######
@@ -180,10 +180,14 @@ class PickHandler(Play):
 			return 0
 		
 	def emailPicks(self,user_picks):
+		picks_string = ""
+		picks = user_picks.picks
+		line = picks.pop()  # get the line 
+		picks = ", ".join(picks)
 		mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
               to=self.user.email,
               subject="Picks",
-              body="Thanks for submitting your picks!")
+              body="Thanks for submitting your picks! " + picks)
 			  
 #Manually set the admin flag to 1 for a user to make them an admin and have access to this menu.
 class AdminHandler(SignupHandler):
@@ -286,11 +290,24 @@ class ResultsHandler(SignupHandler):
 		if not week or week == 0:
 			self.redirect_to('play')
 			return None
-		usernames = []
-		users = User.all().fetch(1000)
-		users = list(users)
-		for u in users:
-			usernames.append(u.username)
+			
+		# Only show results after cutoff date
+		cur_time = datetime.datetime.now(ARIZONA)
+		cutoff_date = current_week(self,return_val=1)
+		show_results = 1#picks_enabled(self,cutoff_date)
+		if not show_results:
+			self.redirect_to('play')
+			return None
+		
+		# Get list of all users
+		usernames = memcache.get('username')
+		if not usernames:
+			usernames = []
+			users = User.all().fetch(1000)
+			users = list(users)
+			for u in users:
+				usernames.append(u.username)
+			memcache.set('username',usernames)
 		
 		# Grab Picks for current week
 		picks = memcache.get("week"+str(week)+"picks")
@@ -369,6 +386,7 @@ def fetch_results(self,week,update = False):
 		results = memcache.get("week"+str(week)+"results")
 	if not results:
 		results = Results.all().filter('week =',week).order("user").fetch(100)
+		results = list(results)
 		memcache.set("week"+str(week)+"results",results)
 	return results
 

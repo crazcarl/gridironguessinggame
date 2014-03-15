@@ -1,0 +1,33 @@
+{% include 'play_header.html' %}
+<body>
+	<div class="container">
+		{% include 'play_head_side.html' %}
+		{% include 'play_side.html' %}
+
+		<div class="col-md-8">
+			<form method="POST" role="form">
+
+			<div class="form-group">
+				<label for="Password">New Password</label>
+				<input type="password" class="form-control" id="password" placeholder="Enter password" name="password">
+			</div>
+			{{error[0]}}
+			<div class="form-group">
+				<label for="verify">Verify New Password</label>
+				<input type="password" class="form-control" id="verify" placeholder="Verify password" name="verify">
+			</div>
+			{{error[1]}}
+
+			<div class="form-group">
+				<label for="email">New Email</label>
+				<input type="email" class="form-control" id="email" placeholder={{email}} name="email">
+			</div>
+			{{error[2]}}
+			<div class="form-group">
+				<input type='submit' name='submit' value="Submit Changes"></input>
+			</div>
+		</form>
+		</div>
+	</div>
+
+</body>

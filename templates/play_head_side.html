@@ -11,6 +11,7 @@
 		<ul class="navbar-right">
 			<div class="nav navbar-nav navbar-brand"><li id="login">Welcome {{user.username}}</li></div>
 			<div class="nav navbar-nav"><li id="login"><a class="navbar-link" href="/logout?source=picks">Log Out</a></li></div>
+			<div class="nav navbar-nav"><li id="login"><a class="navbar-link" href="/play/settings">Settings</a></li></div>
 			{% if user.admin == 1 %}
 			<div class="nav navbar-nav"><li id="login"><a class="navbar-link" href="/admin">Admin Menu</a></li></div>
 			{% endif %}

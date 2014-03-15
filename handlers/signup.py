@@ -5,6 +5,7 @@ import hashlib
 import random
 from string import letters
 import webapp2
+from google.appengine.api import memcache
 
 UN_RE=re.compile("^[a-zA-Z0-9_-]{3,20}$")
 PW_RE=re.compile("^.{3,20}$")
@@ -47,7 +48,6 @@ class SignupHandler(AppHandler):
 		else:
 			self.done()
 
-
 		
 
 class Register(SignupHandler):
@@ -62,11 +62,65 @@ class Register(SignupHandler):
 		else:
 			u = User.register(self.username, self.password,self.email)
 			u.put()
+			usernames = memcache.get('usernames')
+			if usernames:
+				usernames.append(u.username)
+				memcache.set('usernames',usernames)
 			self.login(u)
 			if self.request.get('source') == "picks":
 				self.redirect_to('play')
 			else:
 				self.redirect_to('welcome')
+	
+class Settings(SignupHandler):
+	def get(self):
+		if not self.user:
+			self.redirect_to('login')
+			return None
+		
+		self.render('user_settings.html',user=self.user,error=[],email=self.user.email)
+		
+	def post(self):
+		password = self.request.get('password')
+		verify = self.request.get('verify')
+		email = self.request.get('email')
+		error = ["","",""]
+		has_error=0
+		
+		if not self.user:
+			self.redirect_to('login')
+			return None
+		
+		# changing passwords:
+		if password:
+			if not PW_RE.match(password):
+				error.insert(0,"Invalid PW")
+				has_error=1
+			if password <> verify:
+				error.insert(1,"PWs no matchy")
+				has_error=1
+			# Submit password change
+			if not has_error:
+				u = self.user
+				pw_hash=make_pw_hash(self.user.username, password)
+				u.pw_hash=pw_hash
+				u.put()
+				error.insert(0,"password changed")
+				pass
+		
+		# changing email
+		if email:
+			if not EM_RE.match(email):
+				error.insert(2,"Invalid Email")
+			else:
+				# Submit email change
+				u = self.user
+				u.email = email
+				u.put()
+				error.insert(2,"Email Changed")
+				pass
+		
+		self.render('user_settings.html',user=self.user,error=error,email=self.user.email)
 
 
 def make_salt(length = 5):

@@ -25,5 +25,6 @@ app = WSGIApplication([
 	Route(r'/admin',handler='handlers.play.AdminHandler', name='admin'),
 	Route(r'/play/standings',handler='handlers.play.StandingsHandler', name='standings'),
 	Route(r'/play/comments',handler='handlers.comments.ForumHandler', name='forum'),
-	Route(r'/play/comments/<thread:\d+>',handler='handlers.comments.ThreadHandler',name='thread')
+	Route(r'/play/comments/<thread:\d+>',handler='handlers.comments.ThreadHandler',name='thread'),
+	Route(r'/play/settings',handler='handlers.signup.Settings',name='settings')
 ], debug=True)
