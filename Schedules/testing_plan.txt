@@ -1,0 +1,166 @@
+
+
+
+Schedule for testing:
+
+Wk 1 (Carl)
+Week,Start,End,Cutoff
+1,6/5/2014,6/7/2014,6/6/2014
+
+6/5 submit picks day (admin loads in new schedule)
+	- verify you get email when new schedule available
+	- verify you see new schedule and it's accurate based on what was loaded
+	- verify you get email each time you submit picks
+	- verify you do not see any of the results
+6/6 cutoff day
+	- verify results are available and accurate after 7pm
+    - verify you can no longer submit picks after 7pm
+6/7 results day (admin submits winner picks)
+	- verify standing are available and accurate
+
+
+	
+Wk 2 (Brandon)
+2,6/8/2014,6/9/2014,6/10/2014
+
+6/8 submit picks day (admin loads in new schedule)
+6/9 cutoff day
+6/10 results day (admin submits winner picks)
+
+
+Wk 3 (Carl)
+3,6/11/2014,6/12/2014,6/13/2014
+
+6/11 submit picks day (admin loads in new schedule)
+6/12 cutoff day
+6/13 results day (admin submits winner picks)
+
+
+Wk 4 (Brandon)
+4,6/14/2014,6/15/2014,6/16/2014
+
+6/14 submit picks day (admin loads in new schedule)
+6/15 cutoff day
+6/16 results day (admin submits winner picks)
+
+Wk 5 (Carl)
+5,6/17/2014,6/18/2014,6/19/2014
+
+6/17 submit picks day (admin loads in new schedule)
+6/18 cutoff day
+6/19 results day (admin submits winner picks)
+
+
+We'll take turns being the "admin" per week.
+
+I went ahead and made the user Rutarded an Admin. It will give you access to the admin menu in the top right corner.
+
+All you'll need to do for the schedule is copy and paste the schedule into the schedule box on the bottom and click the button on the bottom.
+
+The other piece is loading the winner picks. This entails logging in with the winner user and making picks. Make sure you get them right, because I haven't handled for that user making multiple picks, I don't think.
+
+username: winner
+password: asdf
+
+Making the picks with winner should trigger the standing table to be populated. I'm doing caching in the background to limit the number of times the db is accessed. I think there was a problem with this where it wouldn't update the cache correctly. So once you submit the picks click the winner page and see if they are updated.
+
+
+
+Weekly Schedules:
+
+Week 1:
+
+Home,Away,Line,Special
+Denver,Baltimore,1
+Chicago,Cincinnati,1
+Buffalo,New England,1
+Cleveland,Miami,1
+New Orleans,Atlanta,1
+Tampa Bay,NY Jets,1
+Pittsburgh,Tennessee,1
+Detroit,Minnesota,1
+Indianapolis,Oakland,1
+Seattle,Carolina,1
+Kansas City,Jacksonville,1
+St Louis,Arizona,1
+San Francisco,Green Bay,1
+Dallas,NY Giants,1
+Washington,Philadelphia,1
+Houston,San Diego,1
+
+Week 2:
+
+Home,Away,Line,Special
+New England,NY Jets,1
+Chicago,Minnesota,1
+Atlanta,St Louis,1
+Carolina,Buffalo,1
+Green Bay,Washington,1
+Indianapolis,Miami,1
+Kansas City, Dallas,1
+Philadelphia,San Diego,1
+Baltimore,Cleveland,1
+Houston,Tennessee,1
+New Orleans,Tampa Bay,1
+Detroit,Arizona,1
+Oakland,Jacksonville,1
+Denver,NY Giants,1
+Seattle,San Francisco,1
+Cincinnati,Pittsburgh,1
+
+Week 3:
+
+Home,Away,Line,Special
+Philadelphia,Kansas City,1
+Tennessee,San Diego,1
+Minnesota,Cleveland,1
+New England,Tampa Bay,1
+Houston,Baltimore,1
+Dallas,St Louis,1
+New Orleans,Arizona,1
+Washington,Detroit,1
+Green Bay,Cincinnati,1
+Carolina,NY Giants,1
+San Francisco,Indianapolis,1
+Miami,Atlanta,1
+Seattle,Jacksonville,1
+NY Jets,Buffalo,1
+Chicago,Pittsburgh,1
+Denver,Oakland,1
+
+Week 4:
+
+Home,Away,Line,Special
+San Francisco,St Louis,1
+Kansas City,NY Giants,1
+Tampa Bay,Arizona,1
+Pittsburgh,Minnesota,1
+Baltimore,Buffalo,1
+Cincinnati,Cleveland,1
+Detroit,Chicago,1
+Seattle,Houston,1
+Indianapolis,Jacksonville,1
+Denver,Philadelphia,1
+Tennessee,NY Jets,1
+Washington,Oakland,1
+Dallas,San Diego,1
+Atlanta,New England,1
+New Orleans,Miami,1
+
+Week 5:
+
+Home,Away,Line,Special
+Cleveland,Buffalo,1
+Cincinnati,New England,1
+St Louis,Jacksonville,1
+New Orleans,Chicago,1
+Miami,Baltimore,1
+NY Giants,Philadelphia,1
+Green Bay,Detroit,1
+Kansas City,Tennessee,1
+Seattle,Indianapolis,1
+Carolina,Arizona,1
+Denver,Dallas,1
+San Francisco,Houston,1
+San Diego,Oakland,1
+Atlanta,NY Jets,1

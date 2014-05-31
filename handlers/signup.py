@@ -11,8 +11,6 @@ UN_RE=re.compile("^[a-zA-Z0-9_-]{3,20}$")
 PW_RE=re.compile("^.{3,20}$")
 EM_RE=re.compile("^[\S]+@[\S]+\.[\S]+$")
 
-SECRET="secret"
-
 
 	
 

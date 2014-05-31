@@ -172,7 +172,7 @@ class PickHandler(Play):
 			memcache.set(str(self.user.username)+"week"+str(week),up)
 			self.redirect_to('picks')
 			####TESTING EMAIL
-			#self.emailPicks(up)
+			self.emailPicks(up)
 			######
 			return 1
 		else:
@@ -185,9 +185,9 @@ class PickHandler(Play):
 		line = picks.pop()  # get the line 
 		picks = ", ".join(picks)
 		mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
-              to=self.user.email,
-              subject="Picks",
-              body="Thanks for submitting your picks! " + picks)
+              to = self.user.email,
+              subject = "Picks",
+              body = self.user.username + ", thanks for submitting your picks! Here they are: \n " + picks)
 			  
 #Manually set the admin flag to 1 for a user to make them an admin and have access to this menu.
 class AdminHandler(SignupHandler):
@@ -427,11 +427,9 @@ def calc_results(self,week,w_picks = None):
 				top_wins = wins
 				winner_list = [[results,tb]]
 	if len(winner_list) > 1:
-		#do tb case
-		for u in winner_list:
-			#fix this later
-			pass
-	elif winner_list:
+		#do tb case, sort by second element in array
+		winner_list = sorted(winner_list, key=lambda x: x[1])
+	if winner_list:
 		winner_list[0][0].winner = 1
 		winner_list[0][0].put()
 	return fetch_results(self,week,update = True)
