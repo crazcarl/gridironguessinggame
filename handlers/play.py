@@ -9,6 +9,7 @@ from google.appengine.api import memcache
 from handlers.signup import User
 from pytz.gae import pytz
 from google.appengine.api import mail
+import time
 
 
 ARIZONA = pytz.timezone('US/Arizona')
@@ -170,10 +171,10 @@ class PickHandler(Play):
 			if self.user.username == "winner":
 				calc_results(self,week,up)
 			memcache.set(str(self.user.username)+"week"+str(week),up)
+			memcache.set("week"+str(week)+"picks","") #clear cache to be reset
 			self.redirect_to('picks')
-			####TESTING EMAIL
+			#email picks
 			self.emailPicks(up)
-			######
 			return 1
 		else:
 			self.redirect_to('play',failed=1)
@@ -429,9 +430,11 @@ def calc_results(self,week,w_picks = None):
 	if len(winner_list) > 1:
 		#do tb case, sort by second element in array
 		winner_list = sorted(winner_list, key=lambda x: x[1])
-	if winner_list:
-		winner_list[0][0].winner = 1
-		winner_list[0][0].put()
+	for w in range(len(winner_list)):
+		if winner_list[w][1] == winner_list[0][1]:
+			winner_list[w][0].winner = 1
+			winner_list[w][0].put()
+	time.sleep(1)
 	return fetch_results(self,week,update = True)
 
 # Compare "winner" picks to user picks
