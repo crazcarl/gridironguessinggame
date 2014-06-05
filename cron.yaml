@@ -1,0 +1,5 @@
+cron:
+- description: thursday morning reminder
+  url: /admin/reminders
+  schedule: every thursday 08:00
+  timezone: US/Arizona
