@@ -412,8 +412,8 @@ def calc_results(self,week,w_picks = None):
 		if not u_picks:
 			u_picks = UserPicks.all().filter('user =', u).filter('week =',week).get()
 		if u_picks:
-			(wins,losses) = compare_picks(self,w_picks.picks,u_picks.picks)
 			tb = abs(int(u_picks.picks[-1]) - int(w_picks.picks[-1]))
+			(wins,losses) = compare_picks(self,w_picks.picks,u_picks.picks)
 		else:
 			#no picks for this week, zero wins
 			wins = 0
@@ -441,6 +441,8 @@ def calc_results(self,week,w_picks = None):
 def compare_picks(self,winner_picks,player_picks):
 	(wins,losses) = 0,0
 	for pick in player_picks:
+		if pick == player_picks[-1]:
+			break
 		if pick in winner_picks:
 			wins += 1
 		else:
