@@ -46,8 +46,9 @@ class Play(SignupHandler):
 		# see if picks are valid this week
 		cur_time = datetime.datetime.now(ARIZONA)
 		cutoff_date = current_week(self,return_val=1)
-		view_only = 0#picks_enabled(self,cutoff_date)
-		
+		view_only = 0
+		if self.user.username <> "winner":
+			view_only = picks_enabled(self,cutoff_date)
 		self.render('play_picks.html',games=sched,user=self.user,message=message,picks=current_picks,time=cur_time,week=week,cutoff=cutoff_date,vo=view_only)
 		
 
@@ -295,7 +296,7 @@ class ResultsHandler(SignupHandler):
 		# Only show results after cutoff date
 		cur_time = datetime.datetime.now(ARIZONA)
 		cutoff_date = current_week(self,return_val=1)
-		show_results = 1#picks_enabled(self,cutoff_date)
+		show_results = picks_enabled(self,cutoff_date)
 		if not show_results:
 			self.redirect_to('play')
 			return None

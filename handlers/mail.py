@@ -7,8 +7,8 @@ from handlers.play import UserPicks
 
 class MailHandler(SignupHandler):
 	def get(self):
-        if self.request.headers.get('X-AppEngine-Cron') is None:
-            return None
+		if self.request.headers.get('X-AppEngine-Cron') is None:
+			return None
 		week = current_week(self)
 		u_list = User.all().fetch(100)
 		u_list = list(u_list)
