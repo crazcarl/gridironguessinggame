@@ -1,4 +1,3 @@
-
 from handlers.signup import SignupHandler
 from handlers.play import current_week
 from google.appengine.api import mail
@@ -18,7 +17,7 @@ class MailHandler(SignupHandler):
 			picks = UserPicks.all().filter("user =", u).filter("week =", week).get()
 			if not picks:
 				mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
-				to = self.user.email,
+				to = u.email,
 				subject = "Picks Reminder",
 				body = "Hey " + u.username + " remember to submit your picks today!")
 				

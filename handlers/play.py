@@ -189,7 +189,7 @@ class PickHandler(Play):
 		mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
               to = self.user.email,
               subject = "Picks",
-              body = self.user.username + ", thanks for submitting your picks! Here they are: \n " + picks)
+              body = self.user.username + ", thanks for submitting your picks! Here they are: \n " + picks + "\n and the tiebreak was " + line +".")
 			  
 #Manually set the admin flag to 1 for a user to make them an admin and have access to this menu.
 class AdminHandler(SignupHandler):

@@ -1,5 +1,5 @@
 cron:
-- description: monday morning reminder
+- description: thursday morning reminder
   url: /admin/reminders
-  schedule: every monday 08:00
+  schedule: every thursday 08:00
   timezone: US/Arizona
