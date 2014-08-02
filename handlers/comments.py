@@ -8,6 +8,9 @@ from google.appengine.ext import db
 
 class ForumHandler(SignupHandler):
 	def get(self):
+		if not self.user:
+			self.redirect_to('login')
+			return None
 		threads = Thread.all().order('-created').fetch(10)
 		self.render('forum.html',threads=threads,user=self.user)
 	def post(self):
@@ -30,6 +33,9 @@ class ForumHandler(SignupHandler):
 		self.redirect_to('forum')
 class ThreadHandler(SignupHandler):
 	def get(self,thread):
+		if not self.user:
+			self.redirect_to('login')
+			return None
 		thread=Thread.by_id(int(thread))
 		posts = Post.all().order('-created').ancestor(thread).fetch(20)
 		self.render('post.html',thread=thread,posts=posts,user=self.user)

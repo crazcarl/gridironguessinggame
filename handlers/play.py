@@ -36,18 +36,20 @@ class Play(SignupHandler):
 			message=None
 			current_picks=[]
 		
+		view_only = 0
 		# get current schedule
 		sched = get_sched(self,week)
 		if self.request.get('failed'):
 			message="Complete picks and try again"
 		if not sched:
 			message ="No schedule loaded for this week, yet"
+			view_only = 1
 		
 		# see if picks are valid this week
 		cur_time = datetime.datetime.now(ARIZONA)
 		cutoff_date = current_week(self,return_val=1)
-		view_only = 0
-		if self.user.username <> "winner":
+		
+		if self.user.username <> "winner" and not view_only:
 			view_only = picks_enabled(self,cutoff_date)
 		self.render('play_picks.html',games=sched,user=self.user,message=message,picks=current_picks,time=cur_time,week=week,cutoff=cutoff_date,vo=view_only)
 		
@@ -59,9 +61,9 @@ def picks_enabled(self,cutoff_date):
 		# first check day
 		if today.date() < cutoff_date:
 			return 0
-		elif today == cutoff_date:
+		elif today.date() == cutoff_date:
 			# then check time
-			cutoff = datetime.datetime(cutoff_date.year,cutoff_date.month,cutoff_date.day,7,0,0,tzinfo=ARIZONA)
+			cutoff = datetime.datetime(cutoff_date.year,cutoff_date.month,cutoff_date.day,19,0,0,tzinfo=ARIZONA)
 			if today < cutoff:
 				return 0
 			else:
@@ -134,6 +136,7 @@ class PickHandler(Play):
 		else:
 			#First time user is making picks
 			self.add_new_picks(week)
+		return None
 				
 	def add_new_picks(self,week):
 		picks = []
@@ -178,7 +181,7 @@ class PickHandler(Play):
 			self.emailPicks(up)
 			return 1
 		else:
-			self.redirect_to('play',failed=1)
+			self.redirect_to('picks',failed=1)
 			return 0
 		
 	def emailPicks(self,user_picks):

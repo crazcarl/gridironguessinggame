@@ -1,0 +1,16 @@
+Home,Away,Line,Special
+Chicago,Jacksonville,0
+New England,Philadelphia,0
+New Orleans,Tennessee,0
+Seattle,San Diego,0
+Oakland,Detroit,0
+St. Louis,Green Bay,0
+Indianapolis,NY Giants,0
+Cincinnati,NY Jets,0
+Dallas,Baltimore,0
+Pittsburgh,Buffalo,0
+Tampa Bay,Miami,0
+Houston,Atlanta,0
+San Francisco,Denver,0
+Carolina,Kansas City,0
+Washington,Cleveland,0

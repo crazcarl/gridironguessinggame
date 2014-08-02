@@ -9,6 +9,8 @@ class MailHandler(SignupHandler):
 		if self.request.headers.get('X-AppEngine-Cron') is None:
 			return None
 		week = current_week(self)
+		if not week:
+			return None
 		u_list = User.all().fetch(100)
 		u_list = list(u_list)
 		for u in u_list:

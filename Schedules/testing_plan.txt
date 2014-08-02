@@ -158,9 +158,9 @@ Miami,Baltimore,1
 NY Giants,Philadelphia,1
 Green Bay,Detroit,1
 Kansas City,Tennessee,1
-Seattle,Indianapolis,1
+Seattle,Indianapolis,-4
 Carolina,Arizona,1
-Denver,Dallas,1
+Denver,Dallas,5
 San Francisco,Houston,1
-San Diego,Oakland,1
-Atlanta,NY Jets,1
+San Diego,Oakland,10
+Atlanta,NY Jets,-1
