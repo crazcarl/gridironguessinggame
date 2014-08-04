@@ -6,6 +6,7 @@ import random
 from string import letters
 import webapp2
 from google.appengine.api import memcache
+from google.appengine.api import mail
 
 UN_RE=re.compile("^[a-zA-Z0-9_-]{3,20}$")
 PW_RE=re.compile("^.{3,20}$")
