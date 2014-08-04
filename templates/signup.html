@@ -9,8 +9,14 @@
 	<h2> Sign Up! </h2>
 	<form method="POST" role="form">
 		<div class="form-group">
+			<label for="realname">Real Name</label>
+			<input type="text" class="form-control" name="realname" placeholder="Enter real name" id="realname">
+			{{error[5]}}
+		</div>
+	
+		<div class="form-group">
 			<label for="name">User Name</label>
-			<input type="text" class="form-control" name="username" placeholder="Enter name" id="name">
+			<input type="text" class="form-control" name="username" placeholder="Enter username" id="name">
 			{{error[0]}}
 		</div>
 		

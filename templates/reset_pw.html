@@ -1,0 +1,24 @@
+{% include 'play_header.html' %}
+<body>
+
+<div class="container">
+{% include 'play_head_side.html' %}
+{% include 'play_side.html' %}
+
+<div class="col-md-8">
+	<h2> Enter your email address and we'll email you a new password. </h2>
+	<form method="POST" role="form">
+	
+		<div class="form-group">
+			<label for="email">Email</label>
+			<input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
+		</div>
+		{{message}}
+		<div class="form-group">
+			<input type='submit' name='submit' value="Reset Password"></input>
+		</div>
+	</form>
+</div>
+</div>
+
+</body>

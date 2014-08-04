@@ -23,8 +23,12 @@ class SignupHandler(AppHandler):
 		self.vpw = self.request.get('verify')
 		self.email = self.request.get('email')
 		self.league = self.request.get('league')
-		error=["","","","",""]
+		self.realname = self.request.get('realname')
+		error=["","","","","",""]
 		has_error=0
+		if not self.realname:
+			error.insert(5,"Please Enter your Real Name")
+			has_error=1
 		if not self.username or not UN_RE.match(self.username):
 			error.insert(0,"Invalid Username")
 			has_error=1
@@ -32,7 +36,7 @@ class SignupHandler(AppHandler):
 			error.insert(1,"Invalid PW")
 			has_error=1
 		if self.password <> self.vpw:
-			error.insert(2,"PWs no matchy")
+			error.insert(2,"Passwords do not match")
 			has_error=1
 		if not self.email or not EM_RE.match(self.email):
 			error.insert(3,"Valid Email Required")
@@ -100,11 +104,10 @@ class Settings(SignupHandler):
 			# Submit password change
 			if not has_error:
 				u = self.user
-				pw_hash=make_pw_hash(self.user.username, password)
+				pw_hash=make_pw_hash(u.username, password)
 				u.pw_hash=pw_hash
 				u.put()
 				error.insert(0,"password changed")
-				pass
 		
 		# changing email
 		if email:
@@ -116,11 +119,39 @@ class Settings(SignupHandler):
 				u.email = email
 				u.put()
 				error.insert(2,"Email Changed")
-				pass
 		
 		self.render('user_settings.html',user=self.user,error=error,email=self.user.email)
 
-
+class Reset(SignupHandler):
+	def get(self):
+		self.render('reset_pw.html')
+		
+	def post(self):
+		email = self.request.get('email')
+		message=""
+		if email:
+			if not EM_RE.match(email):
+				message="Not a valid email address"
+			else:
+				u = User.all().filter('email =', email).get()
+				if u:
+					#Generate New Password
+					password=''.join(random.choice(letters) for _ in range(12))
+					
+					#Do the password reset
+					pw_hash=make_pw_hash(u.username, password)
+					u.pw_hash=pw_hash
+					u.put()
+					
+					#send email
+					mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
+					to = u.email,
+					subject = "Football Picks Password reset",
+					body = "Your new password is " + password "\n After logging in, change it by clicking the settings button in the top right")
+					message="Email Sent"
+				else:
+					message="Email address not found"
+		self.render('reset_pw.html',message=message)
 def make_salt(length = 5):
     return ''.join(random.choice(letters) for x in xrange(length))
 
@@ -143,6 +174,8 @@ class User(db.Model):
 	pw_hash=db.StringProperty(required = True)
 	admin = db.IntegerProperty(default = 0)
 	email = db.EmailProperty()
+	realname = db.StringProperty()
+	money = db.FloatProperty()
     
 	@classmethod
 	def by_id(cls, uid):
