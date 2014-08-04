@@ -147,7 +147,7 @@ class Reset(SignupHandler):
 					mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
 					to = u.email,
 					subject = "Football Picks Password reset",
-					body = "Your new password is " + password "\n After logging in, change it by clicking the settings button in the top right")
+					body = "Your new password is " + password + "\n After logging in, change it by clicking the settings button in the top right")
 					message="Email Sent"
 				else:
 					message="Email address not found"
