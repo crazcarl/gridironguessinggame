@@ -12,6 +12,20 @@
 <table class="table">
 	<thead>
 		<th>Player</th>
+		<th>Wins</th>
+	</thead>
+	<tbody>
+		{% for player in overall_results %}
+		<tr> <td>{{player[0]}}</td>
+			 <td>{{player[1]}}</td>
+		</tr>
+		{% endfor %}
+	</tbody>
+</table>
+
+<table class="table">
+	<thead>
+		<th>Player</th>
 		{% for w in range(1,weeks+1) %}
 		<th> wk {{w}}</th>
 		{% endfor %}

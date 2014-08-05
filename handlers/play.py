@@ -382,7 +382,19 @@ class StandingsHandler(SignupHandler):
 		for w in range(1,weeks+1):
 			results.append(fetch_results(self,w))
 		results = map(list, zip(*results))
-		self.render('play_standings.html',results=results,user=self.user,weeks=weeks)
+		
+		overall_results=[]
+		# Calculate Cumulative results
+		for row in results:
+			wins = 0
+			for wk_result in row:
+				wins += wk_result.wins
+			overall_results.insert(0,[row[0].user.username,wins])
+		
+		# Sort Overall Results
+		overall_results = sorted(overall_results, key=lambda x: x[1])
+		
+		self.render('play_standings.html',results=results,overall_results=overall_results,user=self.user,weeks=weeks)
 		
 # Grabs the results for building the standings
 def fetch_results(self,week,update = False):

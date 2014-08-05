@@ -28,5 +28,6 @@ app = WSGIApplication([
 	Route(r'/play/comments/<thread:\d+>',handler='handlers.comments.ThreadHandler',name='thread'),
 	Route(r'/play/settings',handler='handlers.signup.Settings',name='settings'),
 	Route(r'/admin/reminders',handler='handlers.mail.MailHandler',name='reminders'),
-	Route(r'/reset',handler='handlers.signup.Reset',name='reset')
+	Route(r'/reset',handler='handlers.signup.Reset',name='reset'),
+	Route(r'/test',handler='handlers.Tests.TestHandler',name='test')
 ], debug=True)
