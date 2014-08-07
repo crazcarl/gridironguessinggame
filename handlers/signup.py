@@ -70,10 +70,7 @@ class Register(SignupHandler):
 				usernames.append(u.username)
 				memcache.set('usernames',usernames)
 			self.login(u)
-			if self.request.get('source') == "picks":
-				self.redirect_to('play')
-			else:
-				self.redirect_to('welcome')
+			self.redirect_to('play')
 	
 class Settings(SignupHandler):
 	def get(self):
@@ -197,18 +194,10 @@ class User(db.Model):
 		u = cls.by_name(name)
 		if u and valid_pw(name, password, u.pw_hash):
 			return u
-		
-class WelcomeHandler(SignupHandler):
-	def welcome(self):
-		#grab cookie
-		u = self.user
-		if not u:
-			self.redirect_to('login')
-		else:
-			self.render('welcome.html',username=u.username)
+
 		
 
-class LoginHandler(WelcomeHandler):
+class LoginHandler(SignupHandler):
 	def get(self):
 		self.render("login.html",error="")
 	def post(self):
@@ -217,10 +206,7 @@ class LoginHandler(WelcomeHandler):
 		u = User.login(username, password)
 		if u:
 			self.login(u)
-			if self.request.get('source') == "picks":
-				self.redirect_to('play')
-			else:
-				self.redirect_to('welcome')
+			self.redirect_to('play')
 		else:
 			msg = 'Invalid login'
 			self.render('login.html', error = msg)

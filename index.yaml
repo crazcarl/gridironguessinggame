@@ -27,6 +27,12 @@ indexes:
   - name: week
   - name: user
 
+- kind: Results
+  properties:
+  - name: week
+  - name: wins
+    direction: desc
+
 - kind: UserPicks
   properties:
   - name: user

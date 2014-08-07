@@ -178,20 +178,20 @@ class PickHandler(Play):
 			memcache.set("week"+str(week)+"picks","") #clear cache to be reset
 			self.redirect_to('picks')
 			#email picks
-			self.emailPicks(up)
+			self.emailPicks(up,week)
 			return 1
 		else:
 			self.redirect_to('picks',failed=1)
 			return 0
 		
-	def emailPicks(self,user_picks):
+	def emailPicks(self,user_picks,week):
 		picks_string = ""
 		picks = user_picks.picks
 		line = picks.pop()  # get the line 
 		picks = ", ".join(picks)
 		mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
               to = self.user.email,
-              subject = "Picks",
+              subject = "Picks for week " + str(week),
               body = self.user.username + ", thanks for submitting your picks! Here they are: \n " + picks + "\n and the tiebreak was " + line +".")
 			  
 #Manually set the admin flag to 1 for a user to make them an admin and have access to this menu.
@@ -391,8 +391,8 @@ class StandingsHandler(SignupHandler):
 				wins += wk_result.wins
 			overall_results.insert(0,[row[0].user.username,wins])
 		
-		# Sort Overall Results
-		overall_results = sorted(overall_results, key=lambda x: x[1])
+		# Sort Overall Results Highest to Lowest
+		overall_results = sorted(overall_results, key=lambda x: -x[1])
 		
 		self.render('play_standings.html',results=results,overall_results=overall_results,user=self.user,weeks=weeks)
 		

@@ -4,9 +4,14 @@
 	{% include 'play_head_side.html' %}
 	{% include 'play_side.html' %}
 	<div class="col-md-8">
-		<form method="post">
+		<form method="post" action="test?type=simulation">
 			<input type="submit" value="Run Test Scenario">
 		</form>
+		<br><br>
+		<form method="post" action="test?type=winners">
+			<input type="submit" value="Run Winner verification">
+		</form>
+		{{message}}
 	</div>
 	</div>
 </body>

@@ -26,8 +26,22 @@ class TestHandler(SignupHandler):
 			return None
 		else:
 			self.render('test.html',user=self.user)
-	# Simulates a full season
+	
+	# Various testing scenarios
 	def post(self):
+		type=self.request.get('type')
+		message = ""
+		
+		if type == "simulation":
+			message = self.simulate()
+		
+		if type == "winners":
+			message = self.winners()
+			
+		self.render('test.html',user=self.user,message=message)
+	
+	# Full Season Simulation. Wipes out most data.
+	def simulate(self):
 		# First, Delete out:
 		#  1. Weeks
 		self.delete_weeks()
@@ -63,13 +77,43 @@ class TestHandler(SignupHandler):
 			
 			# Next, calculate results
 			calc_results(self,w+1)
-			
+			self.delete_weeks()
 		# Next, set the current week to 2 so we can see standing:
 		self.set_week(17)
+		message = "simulation successful"
+		return message
+	
+	# Loops through results and make sure winners has top score (or at least tied for top score)
+	def winners(self):
+		r = Results.all().order("-week").get()
+		weeks = r.week
+		message = ""
+		if not weeks or weeks<1:
+			message = "No results found for valid week"
 		
+		if message:
+			return message
 		
-		self.render('test.html',user=self.user)
-		
+		for w in range(weeks):
+			results=Results.all().filter("week =", w+1).order("-wins").fetch(1000)
+			wins = -1
+			marked_winner = -1
+			for r in results:
+				if wins == -1:
+					wins = r.wins
+				if r.winner == 1:
+					marked_winner = r.wins
+					break
+			if wins <> marked_winner:
+				message += "Marked winner has " + str(marked_winner) + " wins, while top wins were " + str(wins) + " for week " + str(r.week) + ".\n"
+			
+			if message:
+				return message
+				
+					
+				
+			
+			
 		
 	def delete_weeks(self):
 		weeks = Weeks.all().fetch(100)
