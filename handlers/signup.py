@@ -212,7 +212,4 @@ class LoginHandler(SignupHandler):
 			self.render('login.html', error = msg)
 	def logout(self):
 		self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
-		if self.request.get('source') == 'picks':
-			self.redirect_to('play')
-		else:
-			self.redirect_to('signup')
+		self.redirect_to('play')

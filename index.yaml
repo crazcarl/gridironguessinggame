@@ -33,6 +33,11 @@ indexes:
   - name: wins
     direction: desc
 
+- kind: Schedule
+  properties:
+  - name: week
+  - name: game
+
 - kind: UserPicks
   properties:
   - name: user

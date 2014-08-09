@@ -10,6 +10,7 @@ from handlers.play import UserPicks
 from handlers.play import Results
 from handlers.play import Schedule
 from handlers.play import calc_results
+from handlers.play import current_week
 from google.appengine.api import memcache
 import time
 
@@ -37,6 +38,15 @@ class TestHandler(SignupHandler):
 		
 		if type == "winners":
 			message = self.winners()
+		
+		if type == "setup":
+			message = self.setup()
+		
+		if type == "picks":
+			message = self.picks_and_results()
+			
+		if type == "advance":
+			message = self.advance()
 			
 		self.render('test.html',user=self.user,message=message)
 	
@@ -109,11 +119,67 @@ class TestHandler(SignupHandler):
 			
 			if message:
 				return message
-				
-					
-				
+	
+	# Starts season over. Loads in picks to get ready for week 1
+	def setup(self):
+		# First, Delete out:
+		#  1. Weeks
+		self.delete_weeks()
+		#  2. Userpicks
+		self.delete_picks()
+		#  3. Results
+		self.delete_results()
+		#  4. Schedule
+		self.delete_sched()
+		
+		
+		#Next, clear memcache
+		memcache.flush_all()		
+		
+
+		
+		# Next, set week to 1
+		self.set_week(1)
 			
-			
+		# Next, load in schedule
+		self.set_schedule(1)
+		
+		message = "Season setup and ready to go, current week is 1"
+		return message
+		
+	def picks_and_results(self):
+		# Grab the current week
+		w = current_week(self)
+		
+		# Next, make some picks
+		self.make_picks(w,'crazcarl2')
+		self.make_picks(w,'crazcarl3')
+		self.make_picks(w,'crazcarl')
+		
+		# Change the week so results page can be seen:
+		self.set_week(w,1)
+		time.sleep(1)
+		
+		# Next, make the winner picks
+		self.make_picks(w,'winner')
+		time.sleep(2)
+		
+		# Next, calculate results
+		calc_results(self,w)
+		
+		memcache.set("weeks","")
+		
+		message = "Results are ready to view for week " + str(w)
+		return message
+		
+	def advance(self):
+		# Grab the current week
+		w = current_week(self)
+		memcache.set("weeks","")
+		
+		self.set_week(w+1)
+		message = "Week " + str(w+1) + " is ready for picks!"
+		return message
 		
 	def delete_weeks(self):
 		weeks = Weeks.all().fetch(100)
@@ -132,15 +198,22 @@ class TestHandler(SignupHandler):
 		for s in sched:
 			s.delete()
 	
-	def set_week(self,week):
+	#option = 0/"" Set week so start date = today
+	#option = 1    Set week so end date = today
+	def set_week(self,week,option = ""):
 		self.delete_weeks()
 		today2 = datetime.datetime.now(ARIZONA)
 		y = today2.year
 		m = today2.month
 		d = today2.day
-		today = datetime.date(y,m,d)
-		tomorrow = today + datetime.timedelta(days=1)
-		next = today + datetime.timedelta(days=2)
+		if not option:
+			today = datetime.date(y,m,d)
+			tomorrow = today + datetime.timedelta(days=1)
+			next = today + datetime.timedelta(days=2)
+		else:
+			today = datetime.date(y,m,d) - datetime.timedelta(days=2)
+			tomorrow = datetime.date(y,m,d) - datetime.timedelta(days=1)
+			next = datetime.date(y,m,d)			
 		weeks = Weeks(week=week,start=today,end=next,cutoff=tomorrow)
 		weeks.put()
 	
@@ -154,12 +227,14 @@ class TestHandler(SignupHandler):
 			'Atlanta','Carolina','New Orleans','Tampa Bay',
 			'Arizona','St. Louis','San Francisco','Seattle']
 		random.shuffle(teams)
+		game_num = 0
 		for game in range(16):
 			home_team = teams.pop()
 			away_team = teams.pop()
 			line = random.uniform(-10,10)
-			sched = Schedule(week=week,home_team=home_team,away_team=away_team,line=line)
+			sched = Schedule(week=week,home_team=home_team,away_team=away_team,line=line,game=game_num)
 			sched.put()
+			game_num += 1
 			
 	def make_picks(self,week,user):
 		sched = Schedule.all().filter("week =",int(week)).fetch(17)

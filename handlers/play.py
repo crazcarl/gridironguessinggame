@@ -108,7 +108,7 @@ def get_sched(self,week):
 		return None
 	sched = memcache.get("week"+str(week))
 	if not sched:
-		sched = Schedule.all().filter("week =",int(week)).fetch(20)
+		sched = Schedule.all().filter("week =",int(week)).order("game").fetch(20)
 		if sched:
 			memcache.set("week"+str(week),sched)
 	return sched
@@ -126,7 +126,7 @@ def picked_this_week(self,week):
 class PickHandler(Play):
 	def post(self):
 		if not self.user:
-			self.redirect_to('login',source='picks')
+			self.redirect_to('login')
 			return None
 		week = current_week(self)	
 		picks = picked_this_week(self,week)
@@ -266,6 +266,7 @@ class AdminHandler(SignupHandler):
 				cs.delete()  # This should probably be moved down to the bottom
 							 # so we only delete if the load is successful
 			sched_cache = []
+			game_num = 0
 			for game in week:
 				game = game.split(",")
 				if game[0] == "Home":
@@ -277,9 +278,11 @@ class AdminHandler(SignupHandler):
 					special = game[3]  # For special messages about games(thursday/xmas/etc..)
 				else:
 					special = ""
-				schedule = Schedule(week=input_week,home_team=home_team,away_team=away_team,line=line,special=special)
+				schedule = Schedule(week=input_week,home_team=home_team,away_team=away_team,line=line,special=special,game=game_num)
 				schedule.put()
 				sched_cache.append(schedule)
+				game_num += 1
+				
 			if len(sched_cache) > 0:
 				memcache.set('week'+str(input_week),sched_cache)
 			self.render('admin.html',message="week file loaded",user=self.user)
@@ -289,7 +292,7 @@ class ResultsHandler(SignupHandler):
 	# Loops over users and finds who picked (and didn't) in UserPicks DB for current week
 	def get(self):
 		if not self.user:
-			self.redirect_to('login',source='picks')
+			self.redirect_to('login')
 			return None
 		week=current_week(self)
 		if not week or week == 0:
@@ -484,6 +487,7 @@ class Schedule(db.Model):
 	away_team = db.StringProperty(required = True)
 	line = db.FloatProperty(required = True)
 	special = db.StringProperty()
+	game = db.IntegerProperty()
 class Weeks(db.Model):
 	week = db.IntegerProperty(required = True)
 	start = db.DateProperty(required = True)
