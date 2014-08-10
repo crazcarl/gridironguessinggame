@@ -63,7 +63,7 @@ class Register(SignupHandler):
 			error.insert(0,msg)
 			self.render('signup.html', error=error)
 		else:
-			u = User.register(self.username, self.password,self.email)
+			u = User.register(self.username, self.password,self.email,self.realname)
 			u.put()
 			usernames = memcache.get('usernames')
 			if usernames:
@@ -185,9 +185,9 @@ class User(db.Model):
 		return u
 	
 	@classmethod
-	def register(cls,name,password,email):
+	def register(cls,name,password,email,realname):
 		pw_hash = make_pw_hash(name, password)
-		return User(username = name, pw_hash = pw_hash, email = email)
+		return User(username = name, pw_hash = pw_hash, email = email, realname = realname)
 					
 	@classmethod
 	def login(cls, name, password):

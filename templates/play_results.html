@@ -7,24 +7,34 @@
 
 <div class="col-md-8">
 
-<h2> These are the picks for week {{week}} </h2>
+<h1> Results </h1>
 
-{% for gamenum in results %}
-	<table class="table">
-		<thead>
-			<th colspan="2" style="text-align:center" class="span3">Game {{gamenum}}</th>
-		</thead>
-		<tbody>
-		{% for team in results[gamenum] %}
-			<tr>
-				<td width="20%">{{team}}</td> 
-				<td width="80%">{{results[gamenum][team]}}</td>
-			</tr>
-		{% endfor %}
-		</tbody>
-	</table><br><br>
-{% endfor %}
-<!-- Loop Here for Users that did not pick this week -->
+{% if message %}
+
+	<h3> {{message}} </h3>
+
+{% else %}
+
+	<h2> These are the picks for week {{week}} </h2>
+
+	{% for gamenum in results %}
+		<table class="table">
+			<thead>
+				<th colspan="2" style="text-align:center" class="span3">Game {{gamenum}}</th>
+			</thead>
+			<tbody>
+			{% for team in results[gamenum] %}
+				<tr>
+					<td width="20%">{{team}}</td> 
+					<td width="80%">{{results[gamenum][team]}}</td>
+				</tr>
+			{% endfor %}
+			</tbody>
+		</table><br><br>
+	{% endfor %}
+	<!-- Loop Here for Users that did not pick this week -->
+
+{% endif %}
 
 </div>
 </div>

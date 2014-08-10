@@ -267,6 +267,7 @@ class AdminHandler(SignupHandler):
 							 # so we only delete if the load is successful
 			sched_cache = []
 			game_num = 0
+			email_body = "Here is the schedule for this week:"
 			for game in week:
 				game = game.split(",")
 				if game[0] == "Home":
@@ -282,6 +283,15 @@ class AdminHandler(SignupHandler):
 				schedule.put()
 				sched_cache.append(schedule)
 				game_num += 1
+				email_body += "\n" + away_team + " is playing at " + home_team + " with a line of " + game[2]
+			
+			# Email out new schedule
+			users = User.all().fetch(100)
+			for u in users:
+				mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
+					to = u.email,
+					subject = "Schedule for week " + str(input_week),
+					body = email_body)		
 				
 			if len(sched_cache) > 0:
 				memcache.set('week'+str(input_week),sched_cache)
@@ -304,7 +314,8 @@ class ResultsHandler(SignupHandler):
 		cutoff_date = current_week(self,return_val=1)
 		show_results = picks_enabled(self,cutoff_date)
 		if not show_results:
-			self.redirect_to('play')
+			# Display message about results
+			self.render('play_results.html',message = "Results are not available until after cutoff date")
 			return None
 		
 		# Get list of all users

@@ -26,7 +26,8 @@ class TestHandler(SignupHandler):
 			self.redirect_to('play')
 			return None
 		else:
-			self.render('test.html',user=self.user)
+			message = datetime.datetime.now(ARIZONA)
+			self.render('test.html',user=self.user,message=message)
 	
 	# Various testing scenarios
 	def post(self):
@@ -48,6 +49,12 @@ class TestHandler(SignupHandler):
 		if type == "advance":
 			message = self.advance()
 			
+		# TODO:
+		# 1. Too many games for a week (schedule loaded in 2x or badly)
+		# 2. User has more than 1 selection of picks for a week
+		# 3. 
+
+		
 		self.render('test.html',user=self.user,message=message)
 	
 	# Full Season Simulation. Wipes out most data.

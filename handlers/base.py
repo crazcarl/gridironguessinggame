@@ -5,6 +5,7 @@ import webapp2
 import hmac
 from main import template_dir
 import handlers.signup
+import pytz
 
 # Initialize the jinja2 environment
 jinja_environment = jinja2.Environment(autoescape=True,
@@ -60,3 +61,14 @@ def check_secure_val(secure_val):
 		return val
 def make_secure_val(val):
 	return '%s|%s' % (val, hash_str(val))
+
+	
+
+def format_datetime(value):
+	utc = pytz.utc
+	fmt = '%m/%d/%y %H:%M:%S'
+	ARIZONA = pytz.timezone('US/Arizona')
+	value = utc.localize(value)
+	return value.astimezone(ARIZONA).strftime(fmt)
+
+jinja_environment.filters['datetime'] = format_datetime
