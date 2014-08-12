@@ -149,8 +149,9 @@ class PickHandler(Play):
 		# Get the picks
 		for row in sched:
 			pick = self.request.get(str(count))
+			if not pick and self.user.username == "winner":
+				pick = "tie"
 			if not pick:
-				#handle this error better. Don't submit it without a warning.
 				failed = 1
 			else:
 				picks.append(pick)
