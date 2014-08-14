@@ -305,18 +305,28 @@ class ResultsHandler(SignupHandler):
 		if not self.user:
 			self.redirect_to('login')
 			return None
-		week=current_week(self)
+		week = ""
+		if self.request.get("weekselection"):
+			week = int(self.request.get("weekselection"))
+		if not week:
+			week=current_week(self)
 		if not week or week == 0:
 			self.redirect_to('play')
 			return None
 			
 		# Only show results after cutoff date
-		cur_time = datetime.datetime.now(ARIZONA)
-		cutoff_date = current_week(self,return_val=1)
-		show_results = picks_enabled(self,cutoff_date)
+		#cutoff_date = current_week(self,return_val=1)
+		wk = Weeks.all().filter("week =",week).get()
+		if wk:
+			cutoff_date = wk.cutoff
+			show_results = picks_enabled(self,cutoff_date)
+		else:
+			show_results = ""
+			cutoff_date = ""
+		
 		if not show_results:
 			# Display message about results
-			self.render('play_results.html',message = "Results are not available until after cutoff date")
+			self.render('play_results.html',message = "Results for week " + str(week) +" are not available until after cutoff date")
 			return None
 		
 		# Get list of all users
@@ -333,7 +343,8 @@ class ResultsHandler(SignupHandler):
 		picks = memcache.get("week"+str(week)+"picks")
 		if not picks:
 			picks = UserPicks.all().filter('week = ',week).fetch(1000)
-			memcache.set("week"+str(week)+"picks",list(picks))
+			if picks:
+				memcache.set("week"+str(week)+"picks",list(picks))
 		
 		# Remove winner from picks and generate list of users who did not submit picks
 		for p in picks:
@@ -342,6 +353,7 @@ class ResultsHandler(SignupHandler):
 			if p.user.username in usernames:
 				usernames.remove(p.user.username)
 		
+		
 		self.display_results(picks,usernames,week)
 	
 	# Renders the play_results.html file to show what users picked for each game
@@ -349,7 +361,7 @@ class ResultsHandler(SignupHandler):
 	#	nopicks - list of names of users that did not pick this week
 	def display_results(self,picks,nopicks,week):
 		#get teams array
-		schedule = Schedule.all().filter("week =",week).fetch(20)
+		schedule = Schedule.all().filter("week =",week).order("game").fetch(20)
 		schedule = list(schedule)
 		games = {}
 		i = 1
@@ -371,6 +383,7 @@ class ResultsHandler(SignupHandler):
 			games[i][ht] = ', '.join([un for un in games[i][ht]])
 			i += 1
 		self.render('play_results.html',results=games,user=self.user,no_picks_list=nopicks,week=week)
+		
 
 # Handles the standings page (how many wins/losses by user by week)
 class StandingsHandler(SignupHandler):
