@@ -14,7 +14,7 @@
 			Load Week:
 			<select name="weekselection">
 				{% for x in range(17) %}
-				<option value=1>Week {{x+1}}</option>
+				<option value={{x+1}}>Week {{x+1}}</option>
 				{% endfor %}
 			</select>
 		<textarea name="week" rows="20"></textarea>

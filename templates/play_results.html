@@ -34,8 +34,12 @@
 				<tbody>
 				{% for team in results[gamenum] %}
 					<tr>
-						<td width="20%">{{team}}</td> 
-						<td width="80%">{{results[gamenum][team]}}</td>
+						<td width="20%">{{team}}</td>
+						<td width="80%">
+						{% if team in winner_list %} <b> {% endif %}
+							{{results[gamenum][team]}}
+						{% if team in winner_list %} </b> {% endif %}
+						</td>
 					</tr>
 				{% endfor %}
 				</tbody>

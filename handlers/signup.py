@@ -70,6 +70,8 @@ class Register(SignupHandler):
 				usernames.append(u.username)
 				memcache.set('usernames',usernames)
 			self.login(u)
+			log = Log(user=u,action="Log In")
+			log.put()
 			self.redirect_to('play')
 	
 class Settings(SignupHandler):
@@ -106,6 +108,8 @@ class Settings(SignupHandler):
 				u.pw_hash=pw_hash
 				u.put()
 				error.insert(0,"password changed")
+				log = Log(user=self.user,action="Change PW")
+				log.put()
 		
 		# changing email
 		if email:
@@ -117,6 +121,8 @@ class Settings(SignupHandler):
 				u.email = email
 				u.put()
 				error.insert(2,"Email Changed")
+				log = Log(user=self.user,action="Change Email")
+				log.put()
 		
 		self.render('user_settings.html',user=self.user,error=error,email=self.user.email)
 
@@ -133,20 +139,24 @@ class Reset(SignupHandler):
 			else:
 				u = User.all().filter('email =', email).get()
 				if u:
-					#Generate New Password
+					# Generate New Password
 					password=''.join(random.choice(letters) for _ in range(12))
 					
-					#Do the password reset
+					# Do the password reset
 					pw_hash=make_pw_hash(u.username, password)
 					u.pw_hash=pw_hash
 					u.put()
 					
-					#send email
+					# Send email
 					mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
 					to = u.email,
 					subject = "Football Picks Password reset",
 					body = "Your new password is " + password + "\n After logging in, change it by clicking the settings button in the top right")
 					message="Email Sent"
+					
+					# Log Action
+					log = Log(user=u,action="Reset PW")
+					log.put()
 				else:
 					message="Email address not found"
 		self.render('reset_pw.html',message=message)
@@ -206,10 +216,22 @@ class LoginHandler(SignupHandler):
 		u = User.login(username, password)
 		if u:
 			self.login(u)
+			log = Log(user=u,action="Log In")
+			log.put()
 			self.redirect_to('play')
 		else:
 			msg = 'Invalid login'
 			self.render('login.html', error = msg)
 	def logout(self):
 		self.response.headers.add_header('Set-Cookie', 'user_id=; Path=/')
+		if self.user:
+			log = Log(user=self.user,action="Log In")
+			log.put()
 		self.redirect_to('play')
+
+# For Logging Events		
+class Log(db.Model):
+	user = db.ReferenceProperty(User)
+	created = db.DateTimeProperty(auto_now_add = True)
+	# Actions: Log In,Log Out,Sign Up,Make Picks,Reset PW, Change Email, Change PW
+	action = db.StringProperty(required = True)

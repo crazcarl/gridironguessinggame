@@ -4,7 +4,7 @@ $(document).ready(function() {
 		//do validation here:
 		var mnfScore = $("#tiebreak").val();
 
-		if (isNaN(mnfScore)) {
+		if (0 === mnfScore.length || isNaN(mnfScore)) {
 			alert("You didn't enter a valid MNF score. It's been replaced with 0. You can resubmit picks");
 		}
 		

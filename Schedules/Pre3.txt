@@ -1,17 +1,17 @@
 Home,Away,Line,Special
-Philadelphia,Pittsburgh,0
-New England,Carolina,0
+Philadelphia,Pittsburgh,-3.5
+New England,Carolina,-5.5
 NY Jets,NY Giants,0
-Detroit,Jacksonville,0
-Green Bay,Oakland,0
-Seattle,Chicago,0
-Buffalo,Tampa Bay,0
-Miami,Dallas,0
-Atlanta,Tennessee,0
-Baltimore,Washington,0
-Indianapolis,New Orleans,0
-Cleveland,St. Louis,0
-Kansas City,Minnesota,0
-Denver,Houston,0
-San Francisco,San Diego,0
-Arizona,Cincinnati,0
+Detroit,Jacksonville,-3
+Green Bay,Oakland,-7
+Seattle,Chicago,-7
+Buffalo,Tampa Bay,-3
+Miami,Dallas,-3
+Atlanta,Tennessee,-3
+Baltimore,Washington,-3
+Indianapolis,New Orleans,-1
+Cleveland,St. Louis,-3
+Kansas City,Minnesota,-3.5
+Denver,Houston,-7
+San Francisco,San Diego,-6
+Arizona,Cincinnati,-2.5

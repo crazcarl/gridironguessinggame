@@ -10,6 +10,7 @@ from handlers.signup import User
 from pytz.gae import pytz
 from google.appengine.api import mail
 import time
+from handlers.signup import Log
 
 
 ARIZONA = pytz.timezone('US/Arizona')
@@ -161,7 +162,7 @@ class PickHandler(Play):
 		tiebreak = self.request.get('tiebreak')
 		#do some validation here to make sure it's a number
 		try:
-			tiebreak = int(tiebreak) + 0
+			tiebreak = int(float(tiebreak)) + 0
 		except ValueError:
 			tiebreak = 0
 		picks.append(str(tiebreak))
@@ -178,8 +179,13 @@ class PickHandler(Play):
 			memcache.set(str(self.user.username)+"week"+str(week),up)
 			memcache.set("week"+str(week)+"picks","") #clear cache to be reset
 			self.redirect_to('picks')
+			
 			#email picks
 			self.emailPicks(up,week)
+			
+			# Log Event:
+			log = Log(user=self.user,action="Submit Picks")
+			log.put()
 			return 1
 		else:
 			self.redirect_to('picks',failed=1)
@@ -346,20 +352,22 @@ class ResultsHandler(SignupHandler):
 			if picks:
 				memcache.set("week"+str(week)+"picks",list(picks))
 		
+		winner_list = ""
 		# Remove winner from picks and generate list of users who did not submit picks
 		for p in picks:
 			if p.user.username == "winner":
+				winner_list = p.picks
 				picks.remove(p)
 			if p.user.username in usernames:
 				usernames.remove(p.user.username)
 		
 		
-		self.display_results(picks,usernames,week)
+		self.display_results(picks,usernames,week,winner_list)
 	
 	# Renders the play_results.html file to show what users picked for each game
 	# 	picks - files from the UserPicks DB for the current week
 	#	nopicks - list of names of users that did not pick this week
-	def display_results(self,picks,nopicks,week):
+	def display_results(self,picks,nopicks,week,winner_list):
 		#get teams array
 		schedule = Schedule.all().filter("week =",week).order("game").fetch(20)
 		schedule = list(schedule)
@@ -382,7 +390,7 @@ class ResultsHandler(SignupHandler):
 			games[i][at] = ', '.join([un for un in games[i][at]])
 			games[i][ht] = ', '.join([un for un in games[i][ht]])
 			i += 1
-		self.render('play_results.html',results=games,user=self.user,no_picks_list=nopicks,week=week)
+		self.render('play_results.html',results=games,user=self.user,no_picks_list=nopicks,week=week,winner_list=winner_list)
 		
 
 # Handles the standings page (how many wins/losses by user by week)
