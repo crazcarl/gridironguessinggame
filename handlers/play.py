@@ -303,6 +303,33 @@ class AdminHandler(SignupHandler):
 			if len(sched_cache) > 0:
 				memcache.set('week'+str(input_week),sched_cache)
 			self.render('admin.html',message="week file loaded",user=self.user)
+		# Load winning picks
+		elif type=="loadwinners":
+			winners = self.request.get("winners")
+			if not winners or winners == "":
+				self.render('admin.html',message="Not a valid winner file",user=self.user)
+				return None
+			winners = [s for s in winners.splitlines() if s]   # Split and remove blanks
+				
+			# Determine selected week
+			input_week = int(self.request.get("winner_weekselection"))
+			
+			
+			# Don't allow loading in winner picks twice.
+			results = Results.all().filter("week =",input_week).fetch(1)
+			if results:
+				self.render('admin.html',message="Already have results for this week. Clear them out first.",user=self.user)
+				return None
+			
+			winner_user = User.by_name("winner")
+						
+			up = UserPicks(user=winner_user,
+				picks = winners,
+				week = input_week,
+				username = winner_user.username)
+			up.put()
+			calc_results(self,input_week,up)
+			self.render('admin.html',message="winner picks loaded, results calculated",user=self.user)
 
 # Handles Results (showing who picked each team for each game)
 class ResultsHandler(SignupHandler):
@@ -452,7 +479,7 @@ def calc_results(self,week,w_picks = None):
 	if not w_picks:
 		return None
 	#get the number of games in the week for no picks case
-	games = len(w_picks.picks)
+	games = len(w_picks.picks) - 1
 	results = {}
 	top_wins = 0
 	winner_list = []

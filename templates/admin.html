@@ -19,6 +19,15 @@
 			</select>
 		<textarea name="week" rows="20"></textarea>
 		<input type="submit" value="Submit Current Week File"></form>
+		<form method="post" action="admin?type=loadwinners">
+			Load Winning picks:
+			<select name="winner_weekselection">
+				{% for x in range(17) %}
+				<option value={{x+1}}>Week {{x+1}}</option>
+				{% endfor %}
+			</select>
+		<textarea name="winners" rows="20"></textarea>
+		<input type="submit" value="Submit Winning Picks"></form>
 	</div>
 	</div>
 </body>

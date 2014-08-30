@@ -185,6 +185,7 @@ class TestHandler(SignupHandler):
 		memcache.set("weeks","")
 		
 		self.set_week(w+1)
+		self.set_schedule(w+1)
 		message = "Week " + str(w+1) + " is ready for picks!"
 		return message
 		
