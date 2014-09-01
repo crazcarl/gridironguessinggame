@@ -43,7 +43,7 @@ class SignupHandler(AppHandler):
 			error.insert(3,"Valid Email Required")
 			has_error=1
 		# TODO: replace with actual PW at some point
-		if self.league <> 'asdf':
+		if self.league <> 'brandon':
 			error.insert(4,"Invalid League PW")
 			has_error=1
 		if has_error==1:
