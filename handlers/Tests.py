@@ -13,6 +13,7 @@ from handlers.play import calc_results
 from handlers.play import current_week
 from google.appengine.api import memcache
 import time
+from handlers.play import check_previous_weeks
 
 ARIZONA = pytz.timezone('US/Arizona')
 
@@ -28,6 +29,7 @@ class TestHandler(SignupHandler):
 		else:
 			message = datetime.datetime.now(ARIZONA)
 			self.render('test.html',user=self.user,message=message)
+		message = 
 	
 	# Various testing scenarios
 	def post(self):

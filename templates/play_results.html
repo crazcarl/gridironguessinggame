@@ -9,6 +9,7 @@
 <div class="col-md-8">
 
 	<h1> Results </h1>
+
 	<form method="GET" class="results" name="selector">
 	<select name="weekselection" class="week_selector">
 		<option value=0>Choose Week</option>
@@ -24,7 +25,25 @@
 
 	{% else %}
 
-		<h2> These are the picks for week {{week}} </h2>
+		{% if temp_standings %}
+		<h2> Temporary Standings for this week </h2>
+		<table class="table">
+			<thead>
+				<th>Player</th>
+				<th>Wins</th>
+			</thead>
+			<tbody>
+				{% for position in temp_standings %}
+				<tr> 
+					<td>{{position.username}}</td>
+					<td>{{temp_standings[position]}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% endif %}
+	
+		<br><h2> These are the picks for week {{week}} </h2>
 
 		{% for gamenum in results %}
 			<table class="table">
