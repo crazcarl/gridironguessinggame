@@ -21,6 +21,6 @@ class MailHandler(SignupHandler):
 				mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
 				to = u.email,
 				subject = "Picks Reminder",
-				body = "Hey " + u.username + " remember to submit your picks today!")
+				body = "Hey " + u.username + " remember to submit your picks today! \n http://gridironguessinggame.appspot.com")
 				
 				

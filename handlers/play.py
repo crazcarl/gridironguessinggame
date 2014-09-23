@@ -200,7 +200,8 @@ class PickHandler(Play):
 		mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
               to = self.user.email,
               subject = "Picks for week " + str(week),
-              body = self.user.username + ", thanks for submitting your picks! Here they are: \n " + picks + "\n and the tiebreak was " + line +".")
+              body = self.user.username + ", thanks for submitting your picks! Here they are: \n " + picks 
+			  + "\n and the tiebreak was " + line + ".\n http://gridironguessinggame.appspot.com")
 			  
 #Manually set the admin flag to 1 for a user to make them an admin and have access to this menu.
 class AdminHandler(SignupHandler):
@@ -292,7 +293,7 @@ class AdminHandler(SignupHandler):
 				sched_cache.append(schedule)
 				game_num += 1
 				email_body += "\n" + away_team + " is playing at " + home_team + " with a line of " + game[2]
-			
+				email_body += "\n http://gridironguessinggame.appspot.com"
 			# Email out new schedule
 			users = User.all().fetch(100)
 			for u in users:
