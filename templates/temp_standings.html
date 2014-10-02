@@ -1,0 +1,30 @@
+{% include 'play_header.html' %}
+ 
+<body>
+
+
+	<div class="container">
+	{% include 'play_head_side.html' %}
+	{% include 'play_side.html' %}
+		<div class="col-md-8">
+		<h2 style="color:red"> Temp Standings are in Beta - may not be accurate, yet </h1>
+		{% if temp_standings %}
+		<h2> Temporary Standings for this week </h2>
+		<table class="table">
+			<thead>
+				<th>Player</th>
+				<th>Wins</th>
+			</thead>
+			<tbody>
+				{% for position in temp_standings %}
+				<tr>
+					<td>{{position.username}}</td>
+					<td>{{temp_standings[position]}}</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+		{% endif %}
+		</div>
+	</div>
+</body>

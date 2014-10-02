@@ -1,4 +1,3 @@
-#from handlers.base import AppHandler
 import csv
 import os
 from main import root_dir
@@ -12,13 +11,15 @@ from google.appengine.api import mail
 import time
 from handlers.signup import Log
 from handlers.comments import Thread,Post
-
+from google.appengine.api import urlfetch
+import xml.etree.ElementTree as ET
 
 ARIZONA = pytz.timezone('US/Arizona')
 
 class Play(SignupHandler):
 	def get(self):
 		self.render('play.html',user=self.user)
+	
 	def picks(self):
 		if not self.user:
 			self.redirect_to('login')
@@ -305,7 +306,8 @@ class AdminHandler(SignupHandler):
 			if len(sched_cache) > 0:
 				memcache.set('week'+str(input_week),sched_cache)
 			self.render('admin.html',message="week file loaded",user=self.user)
-		# Load winning picks
+
+		# Load winning picks manually
 		elif type=="loadwinners":
 			winners = self.request.get("winners")
 			if not winners or winners == "":
@@ -332,7 +334,12 @@ class AdminHandler(SignupHandler):
 			up.put()
 			calc_results(self,input_week,up)
 			self.render('admin.html',message="winner picks loaded, results calculated",user=self.user)
+			
 
+			
+# ------------------------------
+# No longer used. See results.py
+#
 # Handles Results (showing who picked each team for each game)
 class ResultsHandler(SignupHandler):
 	# Loops over users and finds who picked (and didn't) in UserPicks DB for current week
@@ -392,7 +399,7 @@ class ResultsHandler(SignupHandler):
 				posts = Post.all().order('-created').ancestor(thread).fetch(200)
 				for post in posts:
 					if post.content.split(",")[0] == str(week):
-						temp_standings = self.build_temp(post.content,picks)
+						temp_standings = build_temp(post.content,picks)
 						break
 		
 		
@@ -436,22 +443,25 @@ class ResultsHandler(SignupHandler):
 			i += 1
 		self.render('play_results.html',results=games,user=self.user,no_picks_list=nopicks,
 										week=week,winner_list=winner_list,temp_standings=temp_standings)
-	
-	# Builds temporary winning picks
-	#  temps = list of temporary winning picks
-	#  picks = list of UserPick objects
-	# Returns array with # of wins per user with current temporary picks
-	def build_temp(self,temps,picks):
-		results = {}
-		for p in picks:
-			if p.user.username == "winner":
-				continue
-			results[p.user] = 0
-			u_picks = p.picks
-			for u_pick in u_picks:
-				if u_pick in temps:
-					results[p.user] += 1
-		return results
+
+# (above code) no longer used, see results.py
+# --------------------------------------------										
+									
+# Builds temporary winning picks
+#  temps = list of temporary winning picks
+#  picks = list of UserPick objects
+# Returns array with # of wins per user with current temporary picks
+def build_temp(self,temps,picks):
+	results = {}
+	for p in picks:
+		if p.user.username == "winner":
+			continue
+		results[p.user] = 0
+		u_picks = p.picks
+		for u_pick in u_picks:
+			if u_pick in temps:
+				results[p.user] += 1
+	return results
 
 # Handles the standings page (how many wins/losses by user by week)
 class StandingsHandler(SignupHandler):
@@ -575,8 +585,102 @@ def compare_picks(self,winner_picks,player_picks):
 		else:
 			losses += 1
 	return (wins,losses)
+	
+class TempStandings(SignupHandler):
+	def get(self):
+		if not self.user:
+			self.redirect_to('login')
+		url = "http://www.nfl.com/liveupdate/scorestrip/ss.xml"
+		result = urlfetch.fetch(url)
+		result = result.content
+		root=ET.fromstring(result)
+		week = current_week(self)
+		rc=[]
+		for child in root:
+			if child.get('w') <> str(week):
+				continue
+			for game in child:
+				if game.get('q') <> 'F':
+					continue
+				home_team = self.team_translate(game.get('h'))
+				gm = Schedule.all().filter('week =',week).filter('home_team =',home_team).get()
+				# Shouldn't happen
+				if not gm:
+					continue
+				home_score_modified = int(game.get('hs')) + gm.line
+				away_score = int(game.get('vs'))				
+				if home_score_modified > away_score:
+					rc.append(home_team)
+				elif home_score_modified < away_score:
+					rc.append(self.team_translate(game.get('v')))
+				else:
+					rc.append('tie')
+		result = rc
+		# Grab Picks for current week
+		picks = memcache.get("week"+str(week)+"picks")
+		if not picks:
+			picks = UserPicks.all().filter('week = ',week).fetch(1000)
+			if picks:
+				memcache.set("week"+str(week)+"picks",list(picks))
+		results = build_temp(self,result,picks)
+		self.render('temp_standings.html',user=self.user,temp_standings=results)
+		
+	def team_translate(self,input):
+		if input=="NYG":
+			return "NY Giants"
+		if input=="WAS":
+			return "Washington"
+		if input=="BAL":
+			return "Baltimore"
+		if input=="CAR":
+			return "Carolina"
+		if input=="CHI":
+			return "Chicago"
+		if input=="GB":
+			return "Green Bay"
+		if input=="HOU":
+			return "Houston"
+		if input=="BUF":
+			return "Buffalo"
+		if input=="IND":
+			return "Indianapolis"
+		if input=="TEN":
+			return "Tennessee"
+		if input=="NYJ":
+			return "NY Jets"
+		if input=="DET":
+			return "Detroit"
+		if input=="OAK":
+			return "Oakland"
+		if input=="MIA":
+			return "Miami"
+		if input=="PIT":
+			return "Pittsburgh"
+		if input=="TB":
+			return "Tampa Bay"
+		if input=="SD":
+			return "San Diego"
+		if input=="JAC":
+			return "Jacksonville"
+		if input=="MIN":
+			return "Minnesota"
+		if input=="ATL":
+			return "Atlanta"
+		if input=="SF":
+			return "San Francisco"
+		if input=="PHI":
+			return "Philadelphia"
+		if input=="DAL":
+			return "Dallas"
+		if input=="NO":
+			return "New Orleans"
+		if input=="KC":
+			return "Kansas City"
+		if input=="NE":
+			return "New England"
+		return "OTHER"
 
-##### Models ######		
+##### Models #####		
 class Results(db.Model):
 	week = db.IntegerProperty(required = True)
 	user = db.ReferenceProperty(User)
@@ -600,4 +704,8 @@ class Weeks(db.Model):
 	week = db.IntegerProperty(required = True)
 	start = db.DateProperty(required = True)
 	end = db.DateProperty(required = True)
-	cutoff = db.DateProperty(required = True) 
+	cutoff = db.DateProperty(required = True)
+class FrontPost(db.Model):
+	title = db.StringProperty(required = True)
+	content = db.BlobProperty(required = True)
+	created = db.DateTimeProperty(auto_now_add = True)

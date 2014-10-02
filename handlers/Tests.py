@@ -29,7 +29,6 @@ class TestHandler(SignupHandler):
 		else:
 			message = datetime.datetime.now(ARIZONA)
 			self.render('test.html',user=self.user,message=message)
-		message = 
 	
 	# Various testing scenarios
 	def post(self):
