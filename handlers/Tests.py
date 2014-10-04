@@ -228,7 +228,7 @@ class TestHandler(SignupHandler):
 	
 	def set_schedule(self,week):
 		teams=['Buffalo','Miami','New England','NY Jets',
-			'Baltimore','Cincinnati','Cleveland','Pittsburg',
+			'Baltimore','Cincinnati','Cleveland','Pittsburgh',
 			'Houston','Indianapolis','Jacksonville','Tennessee',
 			'Denver','Kansas City','Oakland','San Diego',
 			'Dallas','NY Giants','Philadelphia','Washington',

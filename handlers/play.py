@@ -13,6 +13,7 @@ from handlers.signup import Log
 from handlers.comments import Thread,Post
 from google.appengine.api import urlfetch
 import xml.etree.ElementTree as ET
+from handlers.helper import teamToLong
 
 ARIZONA = pytz.timezone('US/Arizona')
 
@@ -590,6 +591,18 @@ class TempStandings(SignupHandler):
 	def get(self):
 		if not self.user:
 			self.redirect_to('login')
+		week = current_week(self)
+		result = get_current_winners(self)
+		# Grab Picks for current week
+		picks = memcache.get("week"+str(week)+"picks")
+		if not picks:
+			picks = UserPicks.all().filter('week = ',week).fetch(1000)
+			if picks:
+				memcache.set("week"+str(week)+"picks",list(picks))
+		results = build_temp(self,result,picks)
+		self.render('temp_standings.html',user=self.user,temp_standings=results)
+
+def get_current_winners(self):
 		url = "http://www.nfl.com/liveupdate/scorestrip/ss.xml"
 		result = urlfetch.fetch(url)
 		result = result.content
@@ -602,7 +615,7 @@ class TempStandings(SignupHandler):
 			for game in child:
 				if game.get('q') <> 'F':
 					continue
-				home_team = self.team_translate(game.get('h'))
+				home_team = teamToLong(game.get('h'))
 				gm = Schedule.all().filter('week =',week).filter('home_team =',home_team).get()
 				# Shouldn't happen
 				if not gm:
@@ -612,73 +625,10 @@ class TempStandings(SignupHandler):
 				if home_score_modified > away_score:
 					rc.append(home_team)
 				elif home_score_modified < away_score:
-					rc.append(self.team_translate(game.get('v')))
+					rc.append(teamToLong(game.get('v')))
 				else:
 					rc.append('tie')
-		result = rc
-		# Grab Picks for current week
-		picks = memcache.get("week"+str(week)+"picks")
-		if not picks:
-			picks = UserPicks.all().filter('week = ',week).fetch(1000)
-			if picks:
-				memcache.set("week"+str(week)+"picks",list(picks))
-		results = build_temp(self,result,picks)
-		self.render('temp_standings.html',user=self.user,temp_standings=results)
-		
-	def team_translate(self,input):
-		if input=="NYG":
-			return "NY Giants"
-		if input=="WAS":
-			return "Washington"
-		if input=="BAL":
-			return "Baltimore"
-		if input=="CAR":
-			return "Carolina"
-		if input=="CHI":
-			return "Chicago"
-		if input=="GB":
-			return "Green Bay"
-		if input=="HOU":
-			return "Houston"
-		if input=="BUF":
-			return "Buffalo"
-		if input=="IND":
-			return "Indianapolis"
-		if input=="TEN":
-			return "Tennessee"
-		if input=="NYJ":
-			return "NY Jets"
-		if input=="DET":
-			return "Detroit"
-		if input=="OAK":
-			return "Oakland"
-		if input=="MIA":
-			return "Miami"
-		if input=="PIT":
-			return "Pittsburgh"
-		if input=="TB":
-			return "Tampa Bay"
-		if input=="SD":
-			return "San Diego"
-		if input=="JAC":
-			return "Jacksonville"
-		if input=="MIN":
-			return "Minnesota"
-		if input=="ATL":
-			return "Atlanta"
-		if input=="SF":
-			return "San Francisco"
-		if input=="PHI":
-			return "Philadelphia"
-		if input=="DAL":
-			return "Dallas"
-		if input=="NO":
-			return "New Orleans"
-		if input=="KC":
-			return "Kansas City"
-		if input=="NE":
-			return "New England"
-		return "OTHER"
+		return rc
 
 ##### Models #####		
 class Results(db.Model):

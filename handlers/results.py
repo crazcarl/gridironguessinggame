@@ -12,6 +12,8 @@ from handlers.play import UserPicks
 from handlers.play import Schedule
 from handlers.play import Weeks
 from handlers.play import picks_enabled
+from handlers.helper import teamToShort
+from handlers.play import get_current_winners
 
 ARIZONA = pytz.timezone('US/Arizona')
 
@@ -44,11 +46,17 @@ class Results(SignupHandler):
 		
 		if not show_results:
 			# Display message about results
-			self.render('full_results.html',message = "Results for week " + str(week) +" are not available until after cutoff date",user = self.user)
+			self.render('full_results.html',message = "Results for week " + str(week) +" are not available until after cutoff date",user = self.user,week=week)
 			return None	
 			
 			
 		games = Schedule.all().filter('week =',week).fetch(17)
+		if not games:
+			self.render('full_results.html',user=self.user,message="No games loaded for this week")
+			return none
+		gamelist=[]
+		for g in games:
+			gamelist.append([teamToShort(g.home_team),teamToShort(g.away_team)])
 		users = User.all().fetch(1000)
 		results = []
 		w_picks = []
@@ -64,9 +72,12 @@ class Results(SignupHandler):
 			picks = up.picks
 			for g in games:
 				if g.home_team in picks:
-					result.append(g.home_team)
+					result.append(teamToShort(g.home_team))
 				else:
-					result.append(g.away_team)
+					result.append(teamToShort(g.away_team))
 			result.append(picks[-1])
 			results.append(result)
-		self.render('full_results.html',user=self.user,games=games,results=results,w_picks=w_picks)
+		if not w_picks:
+			w_picks = get_current_winners(self)
+		w_picks = [ teamToShort(x) for x in w_picks ]
+		self.render('full_results.html',user=self.user,games=gamelist,results=results,w_picks=w_picks,week=week)

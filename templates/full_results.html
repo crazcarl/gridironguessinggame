@@ -9,6 +9,7 @@
 <div class="col-md-8">
 
 	<h1> Results </h1>
+	<h2> Week {{week}} </h2>
 
 	<form method="GET" class="results" name="selector">
 	<select name="weekselection" class="week_selector">
@@ -27,10 +28,10 @@
 
 
 			<table class="table">
-				<thead style="font-size:10px">
+				<thead style="font-size:20px">
 					<th style="text-align:center">Name</th>
 					{% for g in games %}
-					<th style="text-align:center">{{g.home_team}} / {{g.away_team}}</th>
+					<th style="text-align:center">{{g[0]}} <br> {{g[1]}}</th>
 					{% endfor %}
 					<th style="text-align:center">TB</th>
 				</thead>
@@ -38,10 +39,12 @@
 				{% for line in results %}
 					<tr>
 						{% for i in line %}
-						<td>
-						{% if i in w_picks %}<b>{% endif %}
+						<td
+						{% if i in w_picks %}
+						style="background-color:#c8e5c1"
+						{% endif %}>
 						{{i}}
-						{% if i in w_picks %}</b>{% endif %}
+						
 						</td>
 						{% endfor %}
 					</tr>
