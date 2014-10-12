@@ -86,6 +86,7 @@ class Settings(SignupHandler):
 		password = self.request.get('password')
 		verify = self.request.get('verify')
 		email = self.request.get('email')
+		display = self.request.get('display')
 		error = ["","",""]
 		has_error=0
 		
@@ -123,6 +124,21 @@ class Settings(SignupHandler):
 				error.insert(2,"Email Changed")
 				log = Log(user=self.user,action="Change Email")
 				log.put()
+				
+		# changing display preference (default is home/away)
+		user_pref = -1
+		if self.user.settings:
+			user_pref = int(self.user.settings) + 1
+		if display and int(display) <> user_pref:
+			u = self.user
+			if display == '2':
+				u.settings = "1"
+				u.put()
+			else:
+				u.settings = "0"
+				u.put()
+			error.insert(3,"Display preferences updated")
+			
 		
 		self.render('user_settings.html',user=self.user,error=error,email=self.user.email)
 
@@ -184,6 +200,7 @@ class User(db.Model):
 	email = db.EmailProperty()
 	realname = db.StringProperty()
 	money = db.FloatProperty()
+	settings = db.StringProperty()
     
 	@classmethod
 	def by_id(cls, uid):

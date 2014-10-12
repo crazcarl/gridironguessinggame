@@ -55,7 +55,12 @@ class Play(SignupHandler):
 		
 		if self.user.username <> "winner" and not view_only:
 			view_only = picks_enabled(self,cutoff_date)
-		self.render('play_picks.html',games=sched,user=self.user,message=message,picks=current_picks,time=cur_time,week=week,cutoff=cutoff_date,vo=view_only)
+			
+		if self.user.settings == '1':
+			form = "play_picks_alt.html"
+		else:
+			form = "play_picks.html"
+		self.render(form,games=sched,user=self.user,message=message,picks=current_picks,time=cur_time,week=week,cutoff=cutoff_date,vo=view_only)
 		
 
 # returns: 0 - picks are enabled (before 5:30pm on the cutoff date passed in)

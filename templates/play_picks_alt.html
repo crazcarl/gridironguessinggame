@@ -8,9 +8,6 @@
 {% include 'play_side.html' %}
 <div class="col-md-8">
 <h4>These are the picks for week {{week}}, the cutoff date for picks is {{cutoff}} at 5:30pm AZ time.</h4>
-{% if not user.settings %}
-	<h4 style="color:red">If you would like to view picks as Favorite/Underdog instead of Home/Away, click the settings button on the top right to switch.</h4>
-{% endif %}
 {% if message %}
 <h2> {{message}}.</h2>
 {% endif %}
@@ -18,37 +15,73 @@
 	<!-- Game Table -->
 	<table class="table">
 	<thead>
-		<th style="text-align:center">Home</th>
+		<th style="text-align:center">Favorite</th>
 		<th style="text-align:center"><a href="#" 
 			data-toggle="modal"
 			data-target="#lineModal">		
 		Line</th>
-		<th style="text-align:center">Away</th>
+		<th style="text-align:center">Underdog</th>
 	</thead>
 	<tbody>
 	{% for game in games %}
 	<tr>
+	
+		<!--Game 1 -->
+		
+		{% if game.line <= 0 %} <!-- Display Home team on left -->
+		
 		<td class="game" id="g1">
-		{% if game.line < 0 %}
-		<b>
-		{% endif %}
-		{{game.home_team}}
-		{% if game.line < 0 %}
-		</b>
-		{% endif %}
-			<input type="radio" name={{loop.index}} value="{{game.home_team}}" class="lefttd" {% if game.home_team in picks %} checked {% endif %} {% if vo %}disabled {% endif %}>
+		<b>{{game.home_team}}</b>
+			<input type="radio" 
+				   name={{loop.index}} 
+				   value="{{game.home_team}}" 
+				   class="lefttd" 
+				   {% if game.home_team in picks %} checked {% endif %} 
+				   {% if vo %}disabled {% endif %}>
 		</td>
-		<td class="line" style="text-align:center">{{game.line}}</td>
-		<td class="game" id="g2">
-		{% if game.line > 0 %}
-		<b>
-		{% endif %}
+		
+		{% else %}   <!-- Display Away team on left -->
+		<td class="game" id="g1">
 		{{game.away_team}}
-		{% if game.line > 0 %}
-		</b>
-		{% endif %}
-			<input type="radio" name={{loop.index}} value="{{game.away_team}}" class="righttd" {% if game.away_team in picks %} checked {% endif %} {% if vo %}disabled {% endif %}>
+			<input type="radio" 
+				   name={{loop.index}} 
+				   value="{{game.away_team}}" 
+				   class="lefttd" 
+				   {% if game.away_team in picks %} checked {% endif %} 
+				   {% if vo %}disabled {% endif %}>
 		</td>
+		{% endif %}
+		
+		<td class="line" style="text-align:center">{{game.line|abs}}</td>
+		
+		
+		<!--Game 2 -->
+		
+		{% if game.line > 0 %} <!-- Display Home team on right -->
+		
+		<td class="game" id="g2">
+		<b>{{game.home_team}}</b>
+			<input type="radio" 
+				   name={{loop.index}} 
+				   value="{{game.home_team}}" 
+				   class="righttd" 
+				   {% if game.home_team in picks %} checked {% endif %} 
+				   {% if vo %}disabled {% endif %}>
+		</td>
+		
+		{% else %}   <!-- Display Away team on right -->
+		<td class="game" id="g2">
+		{{game.away_team}}
+			<input type="radio" 
+				   name={{loop.index}} 
+				   value="{{game.away_team}}" 
+				   class="righttd" 
+				   {% if game.away_team in picks %} checked {% endif %} 
+				   {% if vo %}disabled {% endif %}>
+		</td>
+		{% endif %}
+		
+		
 		{% if game.special %}
 		<td class="message">
 			<span>{{game.special}}</span>
@@ -72,7 +105,7 @@
             <h4 class="modal-title" id="myModalLabel">Odds Line</h4>
             </div>
             <div class="modal-body">
-                <h3>The team in bold is the favorite</h3>
+                <h3>The team in bold is the home team</h3>
             </div>
     </div>
   </div>

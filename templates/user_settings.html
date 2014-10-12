@@ -23,6 +23,23 @@
 				<input type="email" class="form-control" id="email" placeholder={{email}} name="email">
 			</div>
 			{{error[2]}}
+			
+			<div class="form-group">
+				<label for="display">Display Preference</label><br>
+					<input type="radio" 
+					name="display" 
+				    value="1"
+					{% if user.settings == "0" %} checked {% endif %}>
+					Home/Away<br>
+					<input type="radio" 
+					name="display" 
+				    value="2"
+					{% if user.settings == "1" %} checked {% endif %}>
+					Favorite/Underdog<br>
+			{{error[3]}}
+			</div>
+			
+			
 			<div class="form-group">
 				<input type='submit' name='submit' value="Submit Changes"></input>
 			</div>
