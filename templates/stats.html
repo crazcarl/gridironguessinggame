@@ -1,0 +1,31 @@
+{% include 'play_header.html' %}
+<script src="/js/jquery.js"></script>
+<body>
+
+<div class="container">
+{% include 'play_head_side.html' %}
+{% include 'play_side.html' %}
+
+<div class="col-md-8">
+
+	<h2> To determine earliest picks </h2>
+	{% for p in ep %}
+		Week {{p.week}}:<br>
+		{{p.user.username}}: {{p.created|datetime}}<br>
+	{% endfor %}
+	
+	<h2> To determine latest picks </h2>
+	{% for p in lp %}
+		Week {{p.week}}:<br>
+		{{p.user.username}}: {{p.created|datetime}}<br>
+	{% endfor %}
+
+	<h2> To determine dunderdogs </h2>
+	{% for p in ud %}
+		{{p}}: {{ud[p]}}<br>
+	{% endfor %}
+	
+	
+</div>
+</div>
+</body>

@@ -125,7 +125,7 @@ def teamToShort(input):
 	if input=="Denver":
 		return "DEN"
 	if input=="Arizona":
-		return "ATI"
+		return "ARI"
 	if input=="Cincinnati":
 		return "CIN"
 	if input=="Seattle":

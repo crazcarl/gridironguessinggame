@@ -50,7 +50,7 @@ class Results(SignupHandler):
 			return None	
 			
 			
-		games = Schedule.all().filter('week =',week).fetch(17)
+		games = Schedule.all().filter('week =',week).order('game').fetch(17)
 		if not games:
 			self.render('full_results.html',user=self.user,message="No games loaded for this week")
 			return none

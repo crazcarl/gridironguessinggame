@@ -10,6 +10,12 @@ indexes:
 # automatically uploaded to the admin console when you next deploy
 # your application using appcfg.py.
 
+- kind: Log
+  properties:
+  - name: action
+  - name: created
+    direction: desc
+
 - kind: Post
   properties:
   - name: parent
@@ -42,4 +48,15 @@ indexes:
   properties:
   - name: user
   - name: week
+    direction: desc
+
+- kind: UserPicks
+  properties:
+  - name: week
+  - name: created
+
+- kind: UserPicks
+  properties:
+  - name: week
+  - name: created
     direction: desc

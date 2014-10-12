@@ -31,7 +31,7 @@ app = WSGIApplication([
 	Route(r'/reset',handler='handlers.signup.Reset',name='reset'),
 	Route(r'/tempstand',handler='handlers.play.TempStandings',name='tempstand'),
 	Route(r'/full_results',handler='handlers.results.Results',name='full_results'),
+	Route(r'/stats',handler='handlers.stats.StatsHandler',name='stats'),
 	# Normally disabled to prevent running in prd.
-	#Route(r'/test',handler='handlers.Tests.TestHandler',name='test')
-	
+	# Route(r'/test',handler='handlers.Tests.TestHandler',name='test')
 ], debug=False)

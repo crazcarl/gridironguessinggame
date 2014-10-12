@@ -613,7 +613,7 @@ def get_current_winners(self):
 			if child.get('w') <> str(week):
 				continue
 			for game in child:
-				if game.get('q') <> 'F':
+				if game.get('q') <> 'F' and game.get('q') <> 'FO':
 					continue
 				home_team = teamToLong(game.get('h'))
 				gm = Schedule.all().filter('week =',week).filter('home_team =',home_team).get()
