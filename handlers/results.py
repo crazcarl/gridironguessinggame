@@ -79,5 +79,8 @@ class Results(SignupHandler):
 			results.append(result)
 		if not w_picks:
 			w_picks = get_current_winners(self)
-		w_picks = [ teamToShort(x) for x in w_picks ]
-		self.render('full_results.html',user=self.user,games=gamelist,results=results,w_picks=w_picks,week=week)
+		if w_picks:
+			w_picks = [ teamToShort(x) for x in w_picks ]
+			self.render('full_results.html',user=self.user,games=gamelist,results=results,w_picks=w_picks,week=week)
+		else:
+			self.render('full_results.html',user=self.user,message="Problem with NFL stats API, try again later")

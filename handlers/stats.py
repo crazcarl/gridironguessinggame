@@ -17,7 +17,9 @@ class StatsHandler(SignupHandler):
 		ep = self.earliest_picks()
 		lp = self.earliest_picks(1)
 		ud = self.underdog_stats()
-		self.render('stats.html',user=self.user,ep=ep,lp=lp,ud=ud)
+		mp = self.most_picks()
+		ol = self.outliers()
+		self.render('stats.html',user=self.user,ep=ep,lp=lp,ud=ud,mp=mp,ol=ol)
 
 	def earliest_picks(self,late = 0):
 		early = []
@@ -58,3 +60,18 @@ class StatsHandler(SignupHandler):
 				else:
 					underdogs[str(up.user.username)] += count
 		return underdogs
+	
+	def most_picks(self):
+		picks = Log.all().filter('action =','Submit Picks').fetch(1000)
+		users = {}
+		for p in picks:
+			if users.has_key(str(p.user.username)):
+				users[str(p.user.username)] += 1
+			else:
+				users[str(p.user.username)] = 1
+		return users
+	
+	def outliers(self):
+		ol = {}
+		return ol
+		

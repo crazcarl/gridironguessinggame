@@ -598,6 +598,10 @@ class TempStandings(SignupHandler):
 			self.redirect_to('login')
 		week = current_week(self)
 		result = get_current_winners(self)
+		if not result:
+			message="Problem with NFL stats API. Check back later"
+			self.render('temp_standings.html',user=self.user,message=message)
+			return None
 		# Grab Picks for current week
 		picks = memcache.get("week"+str(week)+"picks")
 		if not picks:
@@ -609,7 +613,10 @@ class TempStandings(SignupHandler):
 
 def get_current_winners(self):
 		url = "http://www.nfl.com/liveupdate/scorestrip/ss.xml"
-		result = urlfetch.fetch(url)
+		try:
+			result = urlfetch.fetch(url)
+		except runtime.apiproxy_errors.DeadlineExceededError:
+			return []
 		result = result.content
 		root=ET.fromstring(result)
 		week = current_week(self)

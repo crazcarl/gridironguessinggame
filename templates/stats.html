@@ -20,11 +20,20 @@
 		{{p.user.username}}: {{p.created|datetime}}<br>
 	{% endfor %}
 
-	<h2> To determine dunderdogs </h2>
+	<h2> To determine underdogs </h2>
 	{% for p in ud %}
 		{{p}}: {{ud[p]}}<br>
 	{% endfor %}
 	
+	<h2> To determine Most Picks </h2>
+	{% for p in mp %}
+		{{p}}: {{ud[p]}}<br>
+	{% endfor %}
+	
+	<h2> To determine Outliers </h2>
+	{% for p in ol %}
+		{{ol}}: {{ol[p]}}<br>
+	{% endfor %}
 	
 </div>
 </div>
