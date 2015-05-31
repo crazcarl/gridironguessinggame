@@ -23,7 +23,7 @@ class StatsHandler(SignupHandler):
 
 	def earliest_picks(self,late = 0):
 		early = []
-		week = current_week(self)
+		week = 17 #current_week(self)
 		for wk in range(week-1):
 			if not late:
 				pick = UserPicks.all().filter("week =",wk+1).order("created").fetch(1)
@@ -34,7 +34,7 @@ class StatsHandler(SignupHandler):
 		return early
 
 	def underdog_stats(self):
-		week = current_week(self)
+		week = 17 #current_week(self)
 		underdogs = {}
 		for wk in range(week):
 			# Build list of underdogs for week just once

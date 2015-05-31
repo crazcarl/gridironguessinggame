@@ -84,3 +84,9 @@ class Results(SignupHandler):
 			self.render('full_results.html',user=self.user,games=gamelist,results=results,w_picks=w_picks,week=week)
 		else:
 			self.render('full_results.html',user=self.user,message="Problem with NFL stats API, try again later")
+			
+class WinHandler(SignupHandler):
+	def get(self):
+		if not self.user:
+			self.redirect_to('login')
+		self.render('iwon.html',user=self.user)
