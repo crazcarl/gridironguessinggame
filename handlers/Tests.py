@@ -261,4 +261,5 @@ class TestHandler(SignupHandler):
 		u = User.by_name(user)
 		up = UserPicks(week=week,user=u,picks=picks)
 		up.put()
-		
+	def cleanup(self):
+		self.render('cleanup.html',user=self.user,test="")

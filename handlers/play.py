@@ -300,7 +300,7 @@ class AdminHandler(SignupHandler):
 				sched_cache.append(schedule)
 				game_num += 1
 				email_body += "\n" + away_team + " is playing at " + home_team + " with a line of " + game[2]
-				email_body += "\n http://gridironguessinggame.appspot.com"
+			email_body += "\n http://gridironguessinggame.appspot.com"
 			# Email out new schedule
 			users = User.all().fetch(100)
 			for u in users:
