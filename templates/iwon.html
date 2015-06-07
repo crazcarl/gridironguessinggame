@@ -7,11 +7,11 @@
 	{% include 'play_head_side.html' %}
 	{% include 'play_side.html' %}
 	<div class="col-md-8">
-	<h2>Hey, you won this week! Pretty cool. Select an image to celebrate. Paste the link to the image in the box and hit submit. Your image will show up on the <a href="http://gridironguessinggame.appspot.com">front page</a>. </h3>
+	<h2>Hey, you won this week! Pretty cool. Select an image to celebrate or talk some smack. Paste the link to the image in the box and hit submit. Your image will show up on the <a href="http://gridironguessinggame.appspot.com">front page</a>. </h3>
 	<h3>It will need to be a direct link to the image. Should look something like http://www.imgur.com/cat.jpg</h3>
 	<h3>If you can't figure it out, email Carl (crazcarl@gmail.com) and he can help.</h3>
 	
-	<form>
+	<form method="POST" role="form">
 		<input type='text' name='imageLink'></input>
 		<input type='submit' value='submit image'></input>
 	</form>

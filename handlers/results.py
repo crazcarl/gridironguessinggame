@@ -14,13 +14,15 @@ from handlers.play import Weeks
 from handlers.play import picks_enabled
 from handlers.helper import teamToShort
 from handlers.play import get_current_winners
+from handlers.play import FrontPost
+from handlers.play import Results
 
 ARIZONA = pytz.timezone('US/Arizona')
 
 
 
 
-class Results(SignupHandler):
+class ResultsHandler(SignupHandler):
 	def get(self):
 		if not self.user:
 			self.redirect_to('login')
@@ -89,4 +91,50 @@ class WinHandler(SignupHandler):
 	def get(self):
 		if not self.user:
 			self.redirect_to('login')
-		self.render('iwon.html',user=self.user)
+		
+		if self.verify_winner():
+			self.render('iwon.html',user=self.user)
+			return None
+		
+		self.redirect_to('play')
+		
+	def post(self):
+		if not self.user:
+			self.redirect_to('login')
+			
+		win_wk = self.verify_winner()
+		if not win_wk:
+			self.redirect_to('play')
+			return None
+			
+		# TODO - code here to replace instead of append if user already posted this week
+		
+		image = self.request.get("imageLink")
+		if not image:
+			self.render('iwon.html',user=self.user)
+			return None
+		p = FrontPost(user=self.user,
+						title="Winner for week 1",
+						content=image,
+						winner=1)
+		p.put()
+		memcache.set("front_posts","")
+		self.redirect_to('play')
+		
+	def verify_winner(self):
+		week=current_week(self)
+		if not week:
+			self.redirect_to('play')
+			return 0
+			
+		# Try the current week first to see if they are posting right after winning
+		won = Results.all().filter('week =',week).filter('winner =',1).filter('user =',self.user).get()
+		if won:
+			return week
+		
+		# Then try the previous week
+		won = Results.all().filter('week =',week-1).filter('winner =',1).filter('user =',self.user).get()
+		if won:
+			return week-1
+		
+		

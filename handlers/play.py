@@ -19,7 +19,11 @@ ARIZONA = pytz.timezone('US/Arizona')
 
 class Play(SignupHandler):
 	def get(self):
-		self.render('play.html',user=self.user)
+		posts = memcache.get("front_posts")
+		if not posts:
+			posts = FrontPost.all().order("-created").fetch(25)
+			memcache.set("front_posts",posts)
+		self.render('play.html',user=self.user,posts=posts)
 	
 	def picks(self):
 		if not self.user:
@@ -669,5 +673,7 @@ class Weeks(db.Model):
 	cutoff = db.DateProperty(required = True)
 class FrontPost(db.Model):
 	title = db.StringProperty(required = True)
-	content = db.BlobProperty(required = True)
+	content = db.TextProperty(required = True)
 	created = db.DateTimeProperty(auto_now_add = True)
+	winner = db.IntegerProperty(default = 0)
+	user = db.ReferenceProperty(User)
