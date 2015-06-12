@@ -107,13 +107,17 @@ class WinHandler(SignupHandler):
 			self.redirect_to('play')
 			return None
 			
-		# TODO - code here to replace instead of append if user already posted this week
-		
 		image = self.request.get("imageLink")
 		if not image:
+			#TODO: Update with fail msg
 			self.render('iwon.html',user=self.user)
 			return None
-		p = FrontPost(user=self.user,
+		
+		p = FrontPost.all().filter("week =",win_wk).filter("user =",self.user).filter("winner =",w).get()
+		if p:
+			p.content = image
+		else: 
+			p = FrontPost(user=self.user,
 						title="Winner for week 1",
 						content=image,
 						winner=1)

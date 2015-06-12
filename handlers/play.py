@@ -567,6 +567,12 @@ def calc_results(self,week,w_picks = None):
 		if winner_list[w][1] == winner_list[0][1]:
 			winner_list[w][0].winner = 1
 			winner_list[w][0].put()
+			# Send email to winner
+			mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
+              to = winner_list[w][0].user.email,
+              subject = "You won this week!",
+              body = winner_list[w][0].user.username + ", You won this week! Head over to http://gridironguessinggame.appspot.com/iwon to upload an"
+			  + "image to celebrate.")
 	time.sleep(1)
 	return fetch_results(self,week,update = True)
 
@@ -677,3 +683,4 @@ class FrontPost(db.Model):
 	created = db.DateTimeProperty(auto_now_add = True)
 	winner = db.IntegerProperty(default = 0)
 	user = db.ReferenceProperty(User)
+	week = db.IntegerProperty(required = True)
