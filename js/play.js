@@ -19,4 +19,17 @@ $(document).ready(function() {
 			}
 		};
 	});
-})
+	
+	$("#check").click(function() {
+		
+		// Get all scores
+		
+		// Find out how many games there were this week
+		
+		// Do mad calcs
+		
+		// Display results
+		$("#result").html("no");
+	});
+});
+

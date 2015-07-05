@@ -8,12 +8,23 @@
 	<div class="col-md-8">
 		<div>{{message}}</div>
 		
-		<!-- Dates File -->
-		<form method="post" action="admin?type=loaddates"><br>Load Dates File: <textarea name="dates" rows="20"></textarea>
-		<input type="submit" value="Submit Dates File"></form>
+	<div class="tabbable">
+	  <ul class="nav nav-tabs">
+		<li class="active"><a href="#dates" data-toggle="tab">Dates</a></li>
+		<li><a href="#weeks" data-toggle="tab">Weeks</a></li>
+		<li><a href="#winners" data-toggle="tab">Winners</a></li>
+	  </ul>
+	  <div class="tab-content">
+		<div id="dates" class="tab-pane active">
+		  <h4>Dates</h4>
+		  <!-- Dates File -->
+		  <form method="post" action="admin?type=loaddates"><br>Load Dates File: <textarea name="dates" rows="20"></textarea>
+		  <input type="submit" value="Submit Dates File"></form>
+		</div>
 		
+		<div id="weeks" class="tab-pane">
+		<h4>Weeks</h4>
 		<!-- Weeks File -->
-		<br><br>
 		<form method="post" action="admin?type=loadweek">
 			Load Week:
 			<select name="weekselection">
@@ -23,23 +34,36 @@
 			</select>
 		<textarea name="week" rows="20"></textarea>
 		<input type="submit" value="Submit Current Week File"></form>
-		<form method="post" action="admin?type=loadwinners">
-			Load Winning picks:
-			<select name="winner_weekselection">
-				{% for x in range(17) %}
-				<option value={{x+1}}>Week {{x+1}}</option>
-				{% endfor %}
-			</select>
-		<textarea name="winners" rows="20"></textarea>
-		<input type="submit" value="Submit Winning Picks"></form>
+		</div>
 		
-		<form method="POST" action="admin?type=newpost">
+		<div id="winners" class="tab-pane">
+		 <h4>Winners</h4>
+		 <!-- Winners File -->
+		 <form method="post" action="admin?type=loadwinners">
+		 	Load Winning picks:
+		 	<select name="winner_weekselection">
+		 		{% for x in range(17) %}
+		 		<option value={{x+1}}>Week {{x+1}}</option>
+		 		{% endfor %}
+		 	</select>
+		 <textarea name="winners" rows="20"></textarea>
+		 <input type="submit" value="Submit Winning Picks"></form>
+		</div>
+	  </div><!-- /.tab-content -->
+	</div><!-- /.tabbable -->
+
+
+
+		
+
+		
+		<!-- <form method="POST" action="admin?type=newpost">
 			Upload New Front Page Post
 		<ul>
 			<li>Title: <input type="text" name="title" size="40"></li>
 			<li>BP Content File: <input type="file" name="datafile" size="40"></li>
 			<li><input type="submit" name="submit" value="Upload"></li>
-		</ul>
+		</ul> -->
 	</form>
 		
 		

@@ -683,4 +683,4 @@ class FrontPost(db.Model):
 	created = db.DateTimeProperty(auto_now_add = True)
 	winner = db.IntegerProperty(default = 0)
 	user = db.ReferenceProperty(User)
-	week = db.IntegerProperty(required = True)
+	week = db.IntegerProperty(required = True, default = 0)

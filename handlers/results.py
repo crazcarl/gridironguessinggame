@@ -113,17 +113,18 @@ class WinHandler(SignupHandler):
 			self.render('iwon.html',user=self.user)
 			return None
 		
-		p = FrontPost.all().filter("week =",win_wk).filter("user =",self.user).filter("winner =",w).get()
+		p = FrontPost.all().filter("week =",win_wk).filter("user =",self.user).filter("winner =",1).get()
 		if p:
 			p.content = image
 		else: 
 			p = FrontPost(user=self.user,
 						title="Winner for week 1",
 						content=image,
-						winner=1)
+						winner=1,
+						week=win_wk)
 		p.put()
 		memcache.set("front_posts","")
-		self.redirect_to('play')
+		self.render('iwon.html',user=self.user,message="got it!")
 		
 	def verify_winner(self):
 		week=current_week(self)
