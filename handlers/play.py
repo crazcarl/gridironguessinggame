@@ -214,7 +214,7 @@ class PickHandler(Play):
               body = self.user.username + ", thanks for submitting your picks! Here they are: \n " + picks 
 			  + "\n and the tiebreak was " + line + ".\n http://gridironguessinggame.appspot.com")
 			  
-#Manually set the admin flag to 1 for a user to make them an admin and have access to this menu.
+# Manually set the admin flag to 1 for a user to make them an admin and have access to this menu.
 class AdminHandler(SignupHandler):
 	def get(self):
 		admin = 0
@@ -287,7 +287,11 @@ class AdminHandler(SignupHandler):
 							 # so we only delete if the load is successful
 			sched_cache = []
 			game_num = 0
-			email_body = "Here is the schedule for this week:"
+			comments=self.request.get('brandon')
+			email_body = ""
+			if comments:
+				email_body += comments
+			email_body += "\nHere is the schedule for this week:"
 			for game in week:
 				game = game.split(",")
 				if game[0] == "Home":
@@ -345,117 +349,7 @@ class AdminHandler(SignupHandler):
 			calc_results(self,input_week,up)
 			self.render('admin.html',message="winner picks loaded, results calculated",user=self.user)
 			
-
-			
-# ------------------------------
-# No longer used. See results.py
-#
-# Handles Results (showing who picked each team for each game)
-class ResultsHandler(SignupHandler):
-	# Loops over users and finds who picked (and didn't) in UserPicks DB for current week
-	def get(self):
-		if not self.user:
-			self.redirect_to('login')
-			return None
-		week = ""
-		if self.request.get("weekselection"):
-			week = int(self.request.get("weekselection"))
-		if not week:
-			week=current_week(self)
-		if not week or week == 0:
-			self.redirect_to('play')
-			return None
-			
-		# Only show results after cutoff date
-		# cutoff_date = current_week(self,return_val=1)
-		wk = Weeks.all().filter("week =",week).get()
-		if wk:
-			cutoff_date = wk.cutoff
-			show_results = picks_enabled(self,cutoff_date)
-		else:
-			show_results = ""
-			cutoff_date = ""
-		
-		if not show_results:
-			# Display message about results
-			self.render('play_results.html',message = "Results for week " + str(week) +" are not available until after cutoff date",user = self.user)
-			return None
-		
-		# Get list of all users
-		usernames = memcache.get('username')
-		if not usernames:
-			usernames = []
-			users = User.all().fetch(1000)
-			users = list(users)
-			for u in users:
-				usernames.append(u.username)
-			memcache.set('username',usernames)
-		
-		# Grab Picks for current week
-		picks = memcache.get("week"+str(week)+"picks")
-		if not picks:
-			picks = UserPicks.all().filter('week = ',week).fetch(1000)
-			if picks:
-				memcache.set("week"+str(week)+"picks",list(picks))
-		
-		
-		# Build Temporary Standings
-		# 0. Check to see if we're in temporary standings range (after cutoff for current week)
-		temp_standings = {}
-		if show_results and week == current_week(self):
-			# 1. See if we have temporary winning picks for this week from forum post
-			thread = Thread.by_id(5726348362383360)
-			if thread:
-				posts = Post.all().order('-created').ancestor(thread).fetch(200)
-				for post in posts:
-					if post.content.split(",")[0] == str(week):
-						temp_standings = build_temp(post.content,picks)
-						break
-		
-		
-		winner_list = ""
-		# Remove winner from picks and generate list of users who did not submit picks
-		for p in picks:
-			if p.user.username == "winner":
-				winner_list = p.picks
-				picks.remove(p)
-			if p.user.username in usernames:
-				usernames.remove(p.user.username)
-		
-		
-		self.display_results(picks,usernames,week,winner_list,temp_standings)
-	
-	# Renders the play_results.html file to show what users picked for each game
-	# 	picks - files from the UserPicks DB for the current week
-	#	nopicks - list of names of users that did not pick this week
-	def display_results(self,picks,nopicks,week,winner_list,temp_standings):
-		#get teams array
-		schedule = Schedule.all().filter("week =",week).order("game").fetch(20)
-		schedule = list(schedule)
-		games = {}
-		i = 1
-		#on results.html, build hash table for results
-		for s in schedule:
-			games[i] = {}
-			ht=s.home_team
-			at=s.away_team
-			games[i][ht] = []
-			games[i][at] = []
-			for p in picks:
-				if ht in p.picks:
-					user=p.user
-					games[i][ht].append(user.username)
-				elif at in p.picks:
-					user=p.user
-					games[i][at].append(user.username)
-			games[i][at] = ', '.join([un for un in games[i][at]])
-			games[i][ht] = ', '.join([un for un in games[i][ht]])
-			i += 1
-		self.render('play_results.html',results=games,user=self.user,no_picks_list=nopicks,
-										week=week,winner_list=winner_list,temp_standings=temp_standings)
-
-# (above code) no longer used, see results.py
-# --------------------------------------------										
+									
 									
 # Builds temporary winning picks
 #  temps = list of temporary winning picks
@@ -547,7 +441,10 @@ def calc_results(self,week,w_picks = None):
 			tb = abs(int(u_picks.picks[-1]) - int(w_picks.picks[-1]))
 			(wins,losses) = compare_picks(self,w_picks.picks,u_picks.picks)
 		else:
-			#no picks for this week, zero wins
+			# check that user is active
+			if u.active == False:
+				continue
+			# no picks for this week, zero wins
 			wins = 0
 			losses = games
 			tb = 0
@@ -559,7 +456,7 @@ def calc_results(self,week,w_picks = None):
 			else:
 				top_wins = wins
 				winner_list = [[results,tb]]
-		#check_previous_weeks(week,u)   #not currently enabled
+		check_previous_weeks(week,u)
 	if len(winner_list) > 1:
 		#do tb case, sort by second element in array
 		winner_list = sorted(winner_list, key=lambda x: x[1])
@@ -580,10 +477,11 @@ def calc_results(self,week,w_picks = None):
 def check_previous_weeks(week,u):
 	for wk in range(1,week):
 		# Determine num of games for week:
-		r_picks = UserPicks.all().filter('week =',wk).get()
-		games = 99 #len(r_picks.picks) - 1
-		u_picks = UserPicks.all().filter('user =', u).filter('week =',wk).get()
-		if not u_picks:
+		winner = User.by_name("winner")
+		r_picks = UserPicks.all().filter('week =',wk).filter('user =',winner).get()
+		games = len(r_picks.picks) - 1
+		u_results = Results.all().filter('user =', u).filter('week =',wk).get()
+		if not u_results:
 			wins = 0
 			losses = games
 			tb = 0
@@ -619,7 +517,23 @@ class TempStandings(SignupHandler):
 			if picks:
 				memcache.set("week"+str(week)+"picks",list(picks))
 		results = build_temp(self,result,picks)
-		self.render('temp_standings.html',user=self.user,temp_standings=results)
+		
+		# Can you still win?
+		# 1. Calculate # of games left
+		gamesLeft = len(Schedule.all().filter('week =',week).fetch(20))
+		# 2. Find person with highest score
+		topDog = 0
+		for r in results:
+			if results(r) > topDog:
+				topDog = results(r)
+		# 3. Compare to your current score
+		if (topDog - results(user.username) > gamesLeft):
+			canWin = 0
+		else:
+			canWin = 1
+		
+		
+		self.render('temp_standings.html',user=self.user,temp_standings=results,canWin=canWin)
 
 def get_current_winners(self):
 		url = "http://www.nfl.com/liveupdate/scorestrip/ss.xml"

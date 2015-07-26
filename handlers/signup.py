@@ -201,6 +201,7 @@ class User(db.Model):
 	realname = db.StringProperty()
 	money = db.FloatProperty()
 	settings = db.StringProperty()
+	active = db.BooleanProperty(default = True)
     
 	@classmethod
 	def by_id(cls, uid):
@@ -233,6 +234,9 @@ class LoginHandler(SignupHandler):
 		u = User.login(username, password)
 		if u:
 			self.login(u)
+			if not u.active:
+				u.active = True;
+				u.put()
 			log = Log(user=u,action="Log In")
 			log.put()
 			self.redirect_to('play')
