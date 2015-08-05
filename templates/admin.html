@@ -6,13 +6,14 @@
 	{% include 'play_head_side.html' %}
 	{% include 'play_side.html' %}
 	<div class="col-md-8">
-		<div>{{message}}</div>
+		<div class='h1'>{{message}}</div>
 		
 	<div class="tabbable">
 	  <ul class="nav nav-tabs">
 		<li class="active"><a href="#dates" data-toggle="tab">Dates</a></li>
 		<li><a href="#weeks" data-toggle="tab">Weeks</a></li>
 		<li><a href="#winners" data-toggle="tab">Winners</a></li>
+		<li><a href="#payments" data-toggle="tab">Payments</a></li>
 	  </ul>
 	  <div class="tab-content">
 		<div id="dates" class="tab-pane active">
@@ -53,6 +54,23 @@
 		 <textarea name="winners" rows="20"></textarea>
 		 <input type="submit" value="Submit Winning Picks"></form>
 		</div>
+		
+		
+		<div id="payments" class="tab-pane">
+		 <h4>User Payments</h4>
+		 <!-- Winners File -->
+		 <form method="post" action="admin?type=payments">
+		<div class="form-group">
+			<label for="username">User Name</label>
+			<input type="text" class="form-control" name="user" placeholder="Enter username of user who paid" id="user">
+		</div>
+		<div class="form-group">
+			<label for="username">Amount Paid</label>
+			<input type="text" class="form-control" name="amount" placeholder="Enter amount paid by user in username field" id="amount">
+		</div>
+		 <input type="submit" value="Submit Payment"></form>
+		</div>
+		
 	  </div><!-- /.tab-content -->
 	</div><!-- /.tabbable -->
 

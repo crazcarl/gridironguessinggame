@@ -14,6 +14,7 @@ from handlers.comments import Thread,Post
 from google.appengine.api import urlfetch
 import xml.etree.ElementTree as ET
 from handlers.helper import teamToLong
+from handlers.signup import Cash
 
 ARIZONA = pytz.timezone('US/Arizona')
 
@@ -348,7 +349,24 @@ class AdminHandler(SignupHandler):
 			up.put()
 			calc_results(self,input_week,up)
 			self.render('admin.html',message="winner picks loaded, results calculated",user=self.user)
+		
+		# submit money paid by user
+		elif type=="payments":
+			u = self.request.get('user')
+			u = User.by_name(u)
+			if not u:
+				self.render('admin.html',message="Unknown user",user=self.user)
+				return None
+			amount = self.request.get('amount')
+			try:
+				amount = int(float(amount)) + 0
+			except ValueError:
+				self.render('admin.html',message="Bad Money Value - must be a number",user=self.user)
+				return None
 			
+			c = Cash(user=u,amount=amount,type="payment")
+			c.put()
+			self.render('admin.html',message="payment successful!",user=self.user)
 									
 									
 # Builds temporary winning picks
@@ -440,6 +458,9 @@ def calc_results(self,week,w_picks = None):
 		if u_picks:
 			tb = abs(int(u_picks.picks[-1]) - int(w_picks.picks[-1]))
 			(wins,losses) = compare_picks(self,w_picks.picks,u_picks.picks)
+			# Log $5 to Cash
+			c = Cash(type="picks",amount=5,user=u)
+			c.put()
 		else:
 			# check that user is active
 			if u.active == False:

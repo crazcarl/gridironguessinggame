@@ -139,6 +139,7 @@ class TestHandler(SignupHandler):
 		self.delete_results()
 		#  4. Schedule
 		self.delete_sched()
+		self.delete_logs()
 		
 		
 		#Next, clear memcache
@@ -147,10 +148,10 @@ class TestHandler(SignupHandler):
 
 		
 		# Next, set week to 1
-		self.set_week(1)
+		#self.set_week(1)
 			
 		# Next, load in schedule
-		self.set_schedule(1)
+		#self.set_schedule(1)
 		
 		message = "Season setup and ready to go, current week is 1"
 		return message
@@ -206,6 +207,17 @@ class TestHandler(SignupHandler):
 		sched = Schedule.all().fetch(1000)
 		for s in sched:
 			s.delete()
+	def delete_logs(self):
+		logs = Logs.all().fetch(1000)
+		for l in logs:
+			l.delete()
+	def delete_forums(self):
+		posts = Posts.all().fetch(1000)
+		for p in posts:
+			p.delete()
+		threads = Thread.all().fetch(1000)
+		for t in threads:
+			t.delete()
 	
 	#option = 0/"" Set week so start date = today
 	#option = 1    Set week so end date = today

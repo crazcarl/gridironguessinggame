@@ -199,7 +199,6 @@ class User(db.Model):
 	admin = db.IntegerProperty(default = 0)
 	email = db.EmailProperty()
 	realname = db.StringProperty()
-	money = db.FloatProperty()
 	settings = db.StringProperty()
 	active = db.BooleanProperty(default = True)
     
@@ -256,3 +255,10 @@ class Log(db.Model):
 	created = db.DateTimeProperty(auto_now_add = True)
 	# Actions: Log In,Log Out,Sign Up,Make Picks,Reset PW, Change Email, Change PW
 	action = db.StringProperty(required = True)
+	
+
+class Cash(db.Model):
+	type = db.StringProperty(required = True)
+	amount = db.IntegerProperty(required = True)
+	user = db.ReferenceProperty(User)
+	created = db.DateTimeProperty(auto_now_add = True)
