@@ -1,4 +1,4 @@
-from google.appengine.ext import db
+﻿from google.appengine.ext import db
 from handlers.signup import SignupHandler
 from google.appengine.api import memcache
 from handlers.play import Schedule
@@ -8,7 +8,8 @@ from handlers.play import current_week
 from handlers.play import UserPicks
 from handlers.play import Schedule
 from handlers.play import Weeks
-
+from handlers.play import Results
+from google.appengine.api import mail
 
 class StatsHandler(SignupHandler):
 	def get(self):
@@ -71,7 +72,14 @@ class StatsHandler(SignupHandler):
 				users[str(p.user.username)] = 1
 		return users
 	
+	def export_picks(self):
+		users = User.all().fetch(100)
+		for u in users:
+			mail.send_mail(sender="Pick Em <crazcarl@gmail.com>",
+				to = u.email,
+				subject = "Sorry for the emails - just doing some prep for the upcoming season",
+				body = "Feel free to login and play during the preseason. No money on the line. If you have ideas or feedback, email Carl at crazcarl@gmail.com or tell Brandon.")	
+
 	def outliers(self):
 		ol = {}
 		return ol
-		

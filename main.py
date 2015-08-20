@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 
 from webapp2 import WSGIApplication, Route
 import re
@@ -8,7 +8,6 @@ root_dir = os.path.dirname(__file__)
 template_dir = os.path.join(root_dir, 'templates')
 								
 from google.appengine.ext import db
-
 
 
 		
@@ -35,5 +34,6 @@ app = WSGIApplication([
 	Route(r'/cleanup',handler='handlers.Tests.TestHandler',name='cleanup',handler_method='cleanup'),
 	Route(r'/iwon',handler='handlers.results.WinHandler',name='winner'),
 	# Normally disabled to prevent running in prd.
-	Route(r'/test',handler='handlers.Tests.TestHandler',name='test')
+	#Route(r'/test',handler='handlers.Tests.TestHandler',name='test'),
+    #Route(r'/export/picks',handler='handlers.stats.StatsHandler',handler_method='export_picks'),
 ], debug=False)

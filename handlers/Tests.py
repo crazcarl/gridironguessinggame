@@ -1,4 +1,4 @@
-from handlers.signup import SignupHandler
+﻿from handlers.signup import SignupHandler
 from handlers.signup import User
 from main import root_dir
 from google.appengine.ext import db
@@ -14,6 +14,9 @@ from handlers.play import current_week
 from google.appengine.api import memcache
 import time
 from handlers.play import check_previous_weeks
+from handlers.signup import Log
+from handlers.comments import Post
+from handlers.comments import Thread
 
 ARIZONA = pytz.timezone('US/Arizona')
 
@@ -140,6 +143,8 @@ class TestHandler(SignupHandler):
 		#  4. Schedule
 		self.delete_sched()
 		self.delete_logs()
+		self.delete_forums()
+
 		
 		
 		#Next, clear memcache
@@ -208,11 +213,11 @@ class TestHandler(SignupHandler):
 		for s in sched:
 			s.delete()
 	def delete_logs(self):
-		logs = Logs.all().fetch(1000)
+		logs = Log.all().fetch(1000)
 		for l in logs:
 			l.delete()
 	def delete_forums(self):
-		posts = Posts.all().fetch(1000)
+		posts = Post.all().fetch(1000)
 		for p in posts:
 			p.delete()
 		threads = Thread.all().fetch(1000)

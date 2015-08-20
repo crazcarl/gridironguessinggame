@@ -1,1 +1,5 @@
-{{test}}
+<br />
+{% for p in test %}
+	{{p.user.username}}|{{p.week}}|{{p.wins}}|{{p.losses}}|{{p.tb}}|{{p.winner}}
+	<br />
+{% endfor %}

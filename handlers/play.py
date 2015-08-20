@@ -1,4 +1,4 @@
-import csv
+﻿import csv
 import os
 from main import root_dir
 from google.appengine.ext import db
@@ -406,7 +406,7 @@ class StandingsHandler(SignupHandler):
 			return None
 		weeks = weeks.week
 		
-		#grab the results for each week to add to the standings
+		# grab the results for each week to add to the standings
 		for w in range(1,weeks+1):
 			results.append(fetch_results(self,w))
 		results = map(list, zip(*results))
