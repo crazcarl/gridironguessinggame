@@ -153,10 +153,10 @@ class TestHandler(SignupHandler):
 
 		
 		# Next, set week to 1
-		#self.set_week(1)
+		self.set_week(1)
 			
 		# Next, load in schedule
-		#self.set_schedule(1)
+		self.set_schedule(1)
 		
 		message = "Season setup and ready to go, current week is 1"
 		return message

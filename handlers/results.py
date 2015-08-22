@@ -1,4 +1,4 @@
-#from handlers.base import AppHandler
+﻿#from handlers.base import AppHandler
 from google.appengine.ext import db
 import datetime
 from handlers.signup import SignupHandler
@@ -79,13 +79,14 @@ class ResultsHandler(SignupHandler):
 					result.append(teamToShort(g.away_team))
 			result.append(picks[-1])
 			results.append(result)
+
 		if not w_picks:
 			w_picks = get_current_winners(self)
 		if w_picks:
 			w_picks = [ teamToShort(x) for x in w_picks ]
 			self.render('full_results.html',user=self.user,games=gamelist,results=results,w_picks=w_picks,week=week)
 		else:
-			self.render('full_results.html',user=self.user,message="Problem with NFL stats API, try again later")
+			self.render('full_results.html',user=self.user,games=gamelist,results=results,week=week)
 			
 class WinHandler(SignupHandler):
 	def get(self):
