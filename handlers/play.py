@@ -545,10 +545,10 @@ class TempStandings(SignupHandler):
 		# 2. Find person with highest score
 		topDog = 0
 		for r in results:
-			if results(r) > topDog:
-				topDog = results(r)
+			if results[r] > topDog:
+				topDog = results[r]
 		# 3. Compare to your current score
-		if (topDog - results(user.username) > gamesLeft):
+		if self.user in results and (topDog - results[self.user] > gamesLeft):
 			canWin = 0
 		else:
 			canWin = 1
